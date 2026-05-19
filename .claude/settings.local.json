@@ -1,0 +1,12 @@
+{
+  "enabledMcpjsonServers": [
+    "playwright",
+    "obsidian",
+    "apple-events"
+  ],
+  "permissions": {
+    "allow": [
+      "Bash(npm run *)"
+    ]
+  }
+}
