@@ -210,7 +210,7 @@ export function DiagramDesktop({ revealed, revealedArrows, nodeStatuses, activeN
               <text className="node-id" x="156" y="717">deployment/airline</text>
               <text className="node-title" x="156" y="741">Airline Client</text>
               <text className="node-sub" x="156" y="761">ticketing flexibility · ops</text>
-              <text className="node-sub" x="156" y="778">team: 20 memebers (devs · QA · BA · PO · SM)</text>
+              <text className="node-sub" x="156" y="778">team: 20 members (devs · QA · BA · PO · SM)</text>
               <text className="node-sub" x="156" y="798" fill="var(--text-dim)">▸ production · active</text>
               <NodeStatus nodeId="airline" nodeStatuses={nodeStatuses} cx={440} cy={713} sx={426} sy={717} loading="rolling out" ready="active" />
             </NodeGrp>

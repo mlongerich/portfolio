@@ -132,9 +132,7 @@ export function HeroSection() {
               {heroReady ? 'running' : heroWord}
             </span>
           </span>
-          <span><span className="k">version:</span> <span className="v">v12.y · 2026</span></span>
-          <span><span className="k">uptime:</span> <span className="v">12y</span></span>
-        </div>
+          <span><span className="k">uptime:</span> <span className="v">12y · still running</span></span>        </div>
       </div>
       <div className="hero-middle">
         <PsAuxPanel />
