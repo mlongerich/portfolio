@@ -1,28 +1,36 @@
 import { useBootSequence } from '../../hooks/useBootSequence.js';
 import { useBootStatus } from '../../hooks/useBootStatus.js';
 
-function PsAuxRow({ pid, ns, name, time, finalStatus, finalLabel }) {
+function PsAuxRow({ pid, ns, name, time, finalStatus, finalLabel, nodeId, onPsRowClick }) {
   const bootLabel = finalStatus === 'build' ? 'spawning' : 'starting';
   const s = useBootStatus(finalStatus, finalLabel, bootLabel);
+  const clickable = !!(nodeId && onPsRowClick);
   return (
-    <>
+    <div
+      className={`ps-row${clickable ? ' ps-row--link' : ''}`}
+      role={clickable ? 'button' : undefined}
+      tabIndex={clickable ? 0 : undefined}
+      onClick={clickable ? () => onPsRowClick(nodeId) : undefined}
+      onKeyDown={clickable ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onPsRowClick(nodeId); } } : undefined}
+      title={clickable ? `View ${ns}${name} in diagram` : undefined}
+    >
       <div className="ps-pid">{pid}</div>
       <div className="ps-name"><span className="ns">{ns}</span>{name}</div>
       <div className="ps-time">{time} ago</div>
       <div className={`ps-status ${s.status}`}>
         <span className="d" />{s.label}
       </div>
-    </>
+    </div>
   );
 }
 
-function PsAuxPanel() {
+function PsAuxPanel({ onPsRowClick }) {
   const rows = [
-    { pid: '2024', ns: 'tech-lead/', name: 'airline',  time: '18mo', finalStatus: 'run',   finalLabel: 'running' },
-    { pid: '2023', ns: 'community/', name: 'platform-eng-lead', time: '3y',   finalStatus: 'run',   finalLabel: 'running' },
-    { pid: '2020', ns: 'community/', name: 'ai-lead',   time: '6y', finalStatus: 'run',   finalLabel: 'running' },
-    { pid: '2025', ns: 'side/',      name: 'ai-meeting-notes.app',      time: '1y',  finalStatus: 'build', finalLabel: 'building' },
-    { pid: '2025', ns: 'side/',      name: 'donation.app',      time: '1y',  finalStatus: 'build', finalLabel: 'building' },
+    { pid: '2024', ns: 'tech-lead/', name: 'airline',             nodeId: 'airline',       time: '18mo', finalStatus: 'run',   finalLabel: 'running' },
+    { pid: '2023', ns: 'community/', name: 'platform-eng-lead',   nodeId: 'community-out', time: '3y',   finalStatus: 'run',   finalLabel: 'running' },
+    { pid: '2020', ns: 'community/', name: 'ai-lead',             nodeId: 'ai-tooling',    time: '6y',   finalStatus: 'run',   finalLabel: 'running' },
+    { pid: '2025', ns: 'side/',      name: 'ai-meeting-notes.app',nodeId: 'dashnote',      time: '1y',   finalStatus: 'build', finalLabel: 'building' },
+    { pid: '2025', ns: 'side/',      name: 'donation.app',        nodeId: 'donation-app',  time: '1y',   finalStatus: 'build', finalLabel: 'building' },
   ];
 
   return (
@@ -38,7 +46,7 @@ function PsAuxPanel() {
           <div className="ps-head">service</div>
           <div className="ps-head">started</div>
           <div className="ps-head">status</div>
-          {rows.map((r, i) => <PsAuxRow key={i} {...r} />)}
+          {rows.map((r, i) => <PsAuxRow key={i} {...r} onPsRowClick={onPsRowClick} />)}
         </div>
       </div>
     </div>
@@ -101,7 +109,7 @@ function HeroFoot() {
   );
 }
 
-export function HeroSection() {
+export function HeroSection({ onPsRowClick }) {
   const { heroWord, heroReady, bootReady } = useBootSequence();
 
   return (
@@ -117,8 +125,8 @@ export function HeroSection() {
           />
         </h1>
         <p className="lede">
-          Lead Consultant at Thoughtworks. Platform engineering, infrastructure, and tech
-          leadership — building the systems that let other engineers ship faster.
+          Internal Developer Platform specialist. Building the portals, pipelines, and golden paths
+          that let engineering teams ship faster. Lead Consultant at Thoughtworks.
         </p>
         <div className="hero-meta">
           <span><span className="k">location:</span> <span className="v">Chiang Mai, TH</span></span>
@@ -135,7 +143,7 @@ export function HeroSection() {
           <span><span className="k">uptime:</span> <span className="v">12y · still running</span></span>        </div>
       </div>
       <div className="hero-middle">
-        <PsAuxPanel />
+        <PsAuxPanel onPsRowClick={onPsRowClick} />
         <LsIndexPanel />
       </div>
       <HeroFoot />

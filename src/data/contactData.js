@@ -28,4 +28,10 @@ export const CONTACTS = [
     value: 'An IDP adventure →',
     modal: true,
   },
+  {
+    label: 'resume / cv',
+    href: '/resume.pdf',
+    value: 'download PDF →',
+    download: true,
+  },
 ];

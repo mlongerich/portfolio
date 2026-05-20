@@ -3,11 +3,10 @@ import { DiagramDesktop } from './DiagramDesktop.jsx';
 import { DiagramMobile } from './DiagramMobile.jsx';
 import { NodeDetailCard } from './NodeDetailCard.jsx';
 import { useProvisioning } from '../../hooks/useProvisioning.js';
-import { useNodeCard } from '../../hooks/useNodeCard.js';
 
-export function DiagramSection({ onTalkClick }) {
+export function DiagramSection({ onTalkClick, nodeCard }) {
   const { revealed, revealedArrows, nodeStatuses, progressLabel } = useProvisioning();
-  const { activeNodeId, pinnedNodeId, activeNodeEl, handlers } = useNodeCard();
+  const { activeNodeId, pinnedNodeId, activeNodeEl, handlers } = nodeCard;
 
   const diagramProps = { revealed, revealedArrows, nodeStatuses, activeNodeId, pinnedNodeId, handlers };
 

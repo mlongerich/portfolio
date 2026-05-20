@@ -12,8 +12,8 @@ export function ContactSection({ onTalkClick }) {
       <h2 style={{ fontFamily: 'var(--mono)', fontSize: '14px', color: 'var(--text-muted)', fontWeight: 500, margin: '0 0 4px 0' }}>
         <span style={{ color: 'var(--text-dim)' }}>$</span> kubectl get ingress/contact
       </h2>
-      <p style={{ fontFamily: 'var(--sans)', color: 'var(--text-muted)', maxWidth: '560px', margin: '18px 0 0' }}>
-        Open to platform engineering and tech leadership roles.
+      <p style={{ fontFamily: 'var(--sans)', color: 'var(--text)', maxWidth: '660px', margin: '10px 0 0' }}>
+        If you're building a platform team or want to talk shop about IDPs, reach out.
       </p>
       <div className="contact-grid">
         {CONTACTS.map((c) => (

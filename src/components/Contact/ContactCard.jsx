@@ -1,6 +1,6 @@
 import { useHoverState } from '../../hooks/useHoverState.js';
 
-export function ContactCard({ label, href, value, external, modal, onTalkClick }) {
+export function ContactCard({ label, href, value, external, modal, download, onTalkClick }) {
   const [hovered, setHovered] = useHoverState();
   const cls = `contact-card${hovered ? ' hovered' : ''}`;
   const hoverProps = {
@@ -27,6 +27,7 @@ export function ContactCard({ label, href, value, external, modal, onTalkClick }
       className={cls}
       href={href}
       {...(external ? { target: '_blank', rel: 'noopener' } : {})}
+      {...(download ? { download: true } : {})}
       {...hoverProps}
     >
       {inner}

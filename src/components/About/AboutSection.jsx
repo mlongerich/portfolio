@@ -7,8 +7,12 @@ export function AboutSection() {
       <div className="about-body">
       <h2><span className="key">$</span> whoami</h2>
       <p>
-        I build backend systems, cloud platforms, and the kind of infrastructure work nobody notices until it breaks. The stuff that lets other engineers ship faster.{' '}
-        <span className="accent">Lead Consultant at Thoughtworks</span>, currently embedded with an airline client where I technical lead a team of 20, improving ticketing flexibility and operational efficiency.
+        I lead cross-functional engineering teams and direct platform strategy.{' '}
+      <span className="accent">Lead Consultant at Thoughtworks</span>, currently embedded with an airline client where I technical lead a team of 20, improving ticketing flexibility and operational efficiency.
+      </p>
+      <p>
+        I build backend systems, cloud platforms, and the kind of infrastructure work nobody notices until it breaks. The stuff that lets other engineers ship faster.
+        I'm particularly focused on <span className="accent">Internal Developer Platforms</span>. The portals, pipelines, and golden paths that reduce cognitive load for engineering teams.{' '}
       </p>
       <p>
         German-Filipino, raised in the US, now based in{' '}

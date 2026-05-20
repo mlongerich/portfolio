@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useHoverRefresh } from './hooks/useHoverRefresh.js';
+import { useNodeCard } from './hooks/useNodeCard.js';
 import { Header } from './components/Header/Header.jsx';
 import { HeroSection } from './components/Hero/HeroSection.jsx';
 import { DiagramSection } from './components/Diagram/DiagramSection.jsx';
@@ -13,13 +14,24 @@ export function App() {
   const [talkModalOpen, setTalkModalOpen] = useState(false);
   const openTalk = () => setTalkModalOpen(true);
   const closeTalk = () => setTalkModalOpen(false);
+  const nodeCard = useNodeCard();
+
+  const handlePsRowClick = (nodeId) => {
+    const nodeEl = document.querySelector(`[data-node="${nodeId}"]`);
+    if (!nodeEl) return;
+    nodeEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    setTimeout(() => {
+      const el = document.querySelector(`[data-node="${nodeId}"]`);
+      if (el) nodeCard.handlers.pinCard(nodeId, el);
+    }, 650);
+  };
 
   return (
     <>
       <Header />
       <main>
-        <HeroSection />
-        <DiagramSection onTalkClick={openTalk} />
+        <HeroSection onPsRowClick={handlePsRowClick} />
+        <DiagramSection onTalkClick={openTalk} nodeCard={nodeCard} />
         <AboutSection />
         <ContactSection onTalkClick={openTalk} />
       </main>

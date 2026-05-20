@@ -238,6 +238,33 @@ section { max-width: 1480px; margin: 0 auto; padding: 0 16px; }
 .ps-table .ps-status.boot  { color: var(--warn); }
 .ps-table .ps-status.idle  { color: var(--text-dim); }
 
+.ps-table .ps-row {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
+  align-items: center;
+  border-radius: 3px;
+  padding: 2px 4px;
+  margin: 0 -4px;
+  cursor: default;
+  transition: background 100ms ease;
+}
+.ps-table .ps-row--link {
+  cursor: pointer;
+}
+.ps-table .ps-row--link:hover,
+.ps-table .ps-row--link:focus-visible {
+  background: rgba(255,255,255,0.05);
+  outline: none;
+}
+.ps-table .ps-row--link:hover .ps-name {
+  color: var(--accent);
+}
+.ps-table .ps-row--link:hover .ps-name .ns {
+  color: var(--accent);
+  opacity: 0.7;
+}
+
 /* ---------- ls site index ---------- */
 .ls-list {
   display: grid;
@@ -553,7 +580,7 @@ svg.diagram { width: 100%; height: auto; display: block; overflow: visible; }
 
 .contact { padding-top: 40px; padding-bottom: 96px; }
 .contact-grid {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  display: grid; grid-template-columns: 1fr 1fr;
   gap: 18px; margin-top: 28px;
 }
 .contact-card {
@@ -586,6 +613,7 @@ footer.site {
   .diagram-wrap    { margin: 0 -32px; padding: 0 32px; }
   .about       { padding-top: 100px; padding-bottom: 100px; }
   .contact     { padding-top: 60px; padding-bottom: 140px; }
+  .contact-grid { grid-template-columns: repeat(3, 1fr); }
 }
 
 /* ---------- Diagram swap ---------- */
