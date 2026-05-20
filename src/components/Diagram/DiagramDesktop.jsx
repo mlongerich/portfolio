@@ -218,7 +218,7 @@ export function DiagramDesktop({ revealed, revealedArrows, nodeStatuses, activeN
             <NodeGrp nodeId="dashnote" ariaLabel="AI meeting notes app project — open details" {...nodeProps}>
               <rect className="node-rect" x="560" y="695" width="320" height="120" rx="5" ry="5" />
               <text className="node-id" x="576" y="717">pod/ai-meeting-notes.app</text>
-              <text className="node-title" x="576" y="741">Meeting Notes App</text>
+              <text className="node-title" x="576" y="741">AI Meeting Notes App</text>
               <text className="node-sub" x="576" y="761">React Native · Supabase · Whisper</text>
               <text className="node-sub" x="576" y="778">audio → AI meeting notes</text>
               <text className="node-sub" x="576" y="798" fill="var(--text-dim)">▸ solo build · in development</text>
