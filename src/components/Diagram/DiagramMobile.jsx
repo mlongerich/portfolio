@@ -188,12 +188,12 @@ export function DiagramMobile({ revealed, revealedArrows, nodeStatuses, activeNo
             <NodeStatus nodeId="dashnote" nodeStatuses={nodeStatuses} cx={366} cy={672} sx={356} sy={675} loading="scheduled" ready="building" fontSize="8" />
           </NodeGrp>
 
-          <NodeGrp nodeId="pfa-app" ariaLabel="Donation App" {...nodeProps}>
+          <NodeGrp nodeId="donation-app" ariaLabel="Donation App" {...nodeProps}>
             <rect className="node-rect" x="24" y="742" width="352" height="72" rx="5" />
             <text className="node-id" x="34" y="760" fontSize="9">pod/donation.app</text>
             <text className="node-title" x="34" y="780" fontSize="13">Donation App</text>
             <text className="node-sub" x="34" y="798" fontSize="10">fundraising · nonprofit · full-stack web</text>
-            <NodeStatus nodeId="pfa-app" nodeStatuses={nodeStatuses} cx={366} cy={758} sx={356} sy={761} loading="scheduled" ready="building" fontSize="8" />
+            <NodeStatus nodeId="donation-app" nodeStatuses={nodeStatuses} cx={366} cy={758} sx={356} sy={761} loading="scheduled" ready="building" fontSize="8" />
           </NodeGrp>
 
           <NodeGrp nodeId="speaking" ariaLabel="Talks and presence" {...nodeProps}>

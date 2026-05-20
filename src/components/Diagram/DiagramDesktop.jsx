@@ -225,14 +225,14 @@ export function DiagramDesktop({ revealed, revealedArrows, nodeStatuses, activeN
               <NodeStatus nodeId="dashnote" nodeStatuses={nodeStatuses} cx={860} cy={713} sx={846} sy={717} loading="scheduled" ready="building" />
             </NodeGrp>
 
-            <NodeGrp nodeId="pfa-app" ariaLabel="Donation App — open details" {...nodeProps}>
+            <NodeGrp nodeId="donation-app" ariaLabel="Donation App — open details" {...nodeProps}>
               <rect className="node-rect" x="980" y="695" width="320" height="120" rx="5" ry="5" />
               <text className="node-id" x="996" y="717">pod/donation.app</text>
               <text className="node-title" x="996" y="741">Donation App</text>
               <text className="node-sub" x="996" y="761">fundraising · mission project</text>
               <text className="node-sub" x="996" y="778">full-stack web</text>
               <text className="node-sub" x="996" y="798" fill="var(--text-dim)">▸ nonprofit · in development</text>
-              <NodeStatus nodeId="pfa-app" nodeStatuses={nodeStatuses} cx={1280} cy={713} sx={1266} sy={717} loading="scheduled" ready="building" />
+              <NodeStatus nodeId="donation-app" nodeStatuses={nodeStatuses} cx={1280} cy={713} sx={1266} sy={717} loading="scheduled" ready="building" />
             </NodeGrp>
 
             <NodeGrp nodeId="community-out" ariaLabel="Community and mentoring — open details" {...nodeProps}>
