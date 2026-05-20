@@ -62,7 +62,7 @@ export const NODE_DATA = {
       ['kv', 'Name', 'Airline (current client)'],
       ['kv', 'Type', 'Production Deployment'],
       ['kv', 'Product', 'Ticketing flexibility · ops efficiency'],
-      ['kv', 'Team', '20 memebers (devs · QA · BA · PO · SM)'],
+      ['kv', 'Team', '20 members (devs · QA · BA · PO · SM)'],
       ['kv', 'Lead', 'Michael Longerich (Tech Lead)'],
       ['kv', 'Status', 'Active', 'running'],
     ],
