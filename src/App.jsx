@@ -1,11 +1,9 @@
 import { useState } from 'react';
 import { useHoverRefresh } from './hooks/useHoverRefresh.js';
 import { useNodeCard } from './hooks/useNodeCard.js';
-import { usePsRowStatuses } from './hooks/usePsRowStatuses.js';
 import { Header } from './components/Header/Header.jsx';
 import { HeroSection } from './components/Hero/HeroSection.jsx';
 import { DiagramSection } from './components/Diagram/DiagramSection.jsx';
-import { AboutSection } from './components/About/AboutSection.jsx';
 import { ContactSection } from './components/Contact/ContactSection.jsx';
 import { VideoModal } from './components/VideoModal/VideoModal.jsx';
 import './globals.css';
@@ -16,19 +14,13 @@ export function App() {
   const openTalk = () => setTalkModalOpen(true);
   const closeTalk = () => setTalkModalOpen(false);
   const nodeCard = useNodeCard();
-  const psRowStatuses = usePsRowStatuses();
-
-  const handlePsRowClick = (nodeId, rowEl) => {
-    nodeCard.handlers.pinCard(nodeId, rowEl, 'psrow');
-  };
 
   return (
     <>
       <Header />
       <main>
-        <HeroSection onPsRowClick={handlePsRowClick} psRowStatuses={psRowStatuses} />
-        <DiagramSection onTalkClick={openTalk} nodeCard={nodeCard} psRowStatuses={psRowStatuses} />
-        <AboutSection />
+        <HeroSection />
+        <DiagramSection onTalkClick={openTalk} nodeCard={nodeCard} />
         <ContactSection onTalkClick={openTalk} />
       </main>
       <VideoModal isOpen={talkModalOpen} onClose={closeTalk} />

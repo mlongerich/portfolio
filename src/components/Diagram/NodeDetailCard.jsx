@@ -36,7 +36,7 @@ function positionCard(card, nodeEl) {
   }
 }
 
-export function NodeDetailCard({ activeNodeId, pinnedNodeId, activeNodeEl, nodeStatuses, activeSource, psRowStatuses, onClose, onOutsideClick, onTalkClick }) {
+export function NodeDetailCard({ activeNodeId, pinnedNodeId, activeNodeEl, nodeStatuses, activeSource, onClose, onOutsideClick, onTalkClick }) {
   const cardRef = useRef(null);
   const visible = !!activeNodeId;
   const data = visible ? NODE_DATA[activeNodeId] : null;
@@ -46,13 +46,10 @@ export function NodeDetailCard({ activeNodeId, pinnedNodeId, activeNodeEl, nodeS
   const liveState = visible ? (nodeStatuses?.[activeNodeId] ?? 'loading') : null;
   const statusConfig = visible ? NODE_STATUSES[activeNodeId] : null;
 
-  const psRow = activeSource === 'psrow' ? psRowStatuses?.[activeNodeId] : null;
-  const statusOverride = psRow
-    ? { text: psRow.label, cls: psRow.status === 'run' ? 'running' : 'warn' }
-    : (statusConfig ? {
-        text: liveState === 'ready' ? statusConfig.ready : statusConfig.loading,
-        cls: liveState === 'ready' ? 'running' : 'warn',
-      } : null);
+  const statusOverride = statusConfig ? {
+    text: liveState === 'ready' ? statusConfig.ready : statusConfig.loading,
+    cls: liveState === 'ready' ? 'running' : 'warn',
+  } : null;
 
   useEffect(() => {
     if (visible && activeNodeEl?.current && cardRef.current) {

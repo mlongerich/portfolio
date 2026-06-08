@@ -5,7 +5,7 @@ import { NodeDetailCard } from './NodeDetailCard.jsx';
 
 import { useProvisioning } from '../../hooks/useProvisioning.js';
 
-export function DiagramSection({ onTalkClick, nodeCard, psRowStatuses }) {
+export function DiagramSection({ onTalkClick, nodeCard }) {
   const { revealed, revealedArrows, nodeStatuses, progressLabel } = useProvisioning();
   const { activeNodeId, pinnedNodeId, activeSource, activeNodeEl, handlers } = nodeCard;
 
@@ -25,7 +25,6 @@ export function DiagramSection({ onTalkClick, nodeCard, psRowStatuses }) {
           activeNodeEl={activeNodeEl}
           nodeStatuses={nodeStatuses}
           activeSource={activeSource}
-          psRowStatuses={psRowStatuses}
           onClose={handlers.dismissCard}
           onOutsideClick={handlers.dismissCard}
           onTalkClick={onTalkClick}

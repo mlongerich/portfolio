@@ -1,94 +1,5 @@
 import { useBootSequence } from '../../hooks/useBootSequence.js';
 
-function PsAuxRow({ pid, ns, name, time, nodeId, onPsRowClick, psRowStatuses }) {
-  const s = psRowStatuses?.[nodeId] ?? { status: 'boot', label: '…' };
-  const clickable = !!(nodeId && onPsRowClick);
-  return (
-    <div
-      className={`ps-row${clickable ? ' ps-row--link' : ''}`}
-      role={clickable ? 'button' : undefined}
-      tabIndex={clickable ? 0 : undefined}
-      onClick={clickable ? (e) => onPsRowClick(nodeId, e.currentTarget) : undefined}
-      onKeyDown={clickable ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onPsRowClick(nodeId, e.currentTarget); } } : undefined}
-      title={clickable ? `View ${ns}${name} in diagram` : undefined}
-    >
-      <div className="ps-pid">{pid}</div>
-      <div className="ps-name"><span className="ns">{ns}</span>{name}</div>
-      <div className="ps-time">{time} ago</div>
-      <div className={`ps-status ${s.status}`}>
-        <span className="d" />{s.label}
-      </div>
-    </div>
-  );
-}
-
-function PsAuxPanel({ onPsRowClick, psRowStatuses }) {
-  const rows = [
-    { pid: '2024', ns: 'tech-lead/', name: 'airline',             nodeId: 'airline',       time: '18mo', finalStatus: 'run'   },
-    { pid: '2023', ns: 'community/', name: 'platform-eng-lead',   nodeId: 'community-out', time: '3y',   finalStatus: 'run'   },
-    { pid: '2020', ns: 'community/', name: 'ai-lead',             nodeId: 'ai-tooling',    time: '6y',   finalStatus: 'run'   },
-    { pid: '2025', ns: 'side/',      name: 'ai-meeting-notes.app',nodeId: 'dashnote',      time: '1y',   finalStatus: 'build' },
-    { pid: '2025', ns: 'side/',      name: 'donation.app',        nodeId: 'donation-app',  time: '1y',   finalStatus: 'build' },
-  ];
-
-  return (
-    <div className="term-block">
-      <div className="term-chrome">
-        <span className="dot" /><span className="dot" /><span className="dot" />
-        <span className="term-title">~ $ ps aux | grep michael</span>
-        <span className="term-badge"><span className="live-dot" />live</span>
-      </div>
-      <div className="term-body">
-        <div className="ps-table">
-          <div className="ps-head">pid</div>
-          <div className="ps-head">service</div>
-          <div className="ps-head">started</div>
-          <div className="ps-head">status</div>
-          {rows.map((r, i) => <PsAuxRow key={i} {...r} onPsRowClick={onPsRowClick} psRowStatuses={psRowStatuses} />)}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function LsIndexPanel() {
-  const entries = [
-    { name: '/diagram', desc: 'the system, visualized', href: '#diagram' },
-    { name: '/about',   desc: 'cat ./README.md',        href: '#about' },
-    { name: '/contact', desc: 'open channels',          href: '#contact' },
-  ];
-
-  return (
-    <div className="term-block" data-anchor-trigger="ls">
-      <div className="term-chrome">
-        <span className="dot" /><span className="dot" /><span className="dot" />
-        <span className="term-title">~ $ ls -la ./michael.longerich/</span>
-        <span className="term-badge">3 items</span>
-      </div>
-      <div className="term-body">
-        <div className="ls-list">
-          {entries.map((e) => (
-            <a
-              key={e.name}
-              className="ls-entry"
-              href={e.href}
-              onClick={(ev) => {
-                ev.preventDefault();
-                const el = document.querySelector(e.href);
-                if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-              }}
-            >
-              <span className="ls-name"><span className="slash">cd </span>{e.name}</span>
-              <span className="ls-desc">{e.desc}</span>
-              <span className="ls-arrow">→</span>
-            </a>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
 function HeroFoot() {
   const onProvision = (e) => {
     e.preventDefault();
@@ -107,7 +18,7 @@ function HeroFoot() {
   );
 }
 
-export function HeroSection({ onPsRowClick, psRowStatuses }) {
+export function HeroSection() {
   const { heroWord, heroReady, bootReady } = useBootSequence();
 
   return (
@@ -122,10 +33,6 @@ export function HeroSection({ onPsRowClick, psRowStatuses }) {
             aria-hidden="true"
           />
         </h1>
-        <p className="lede">
-          Internal Developer Platform specialist. Building the portals, pipelines, and golden paths
-          that let engineering teams ship faster. Lead Consultant at Thoughtworks.
-        </p>
         <div className="hero-meta">
           <span><span className="k">location:</span> <span className="v">Chiang Mai, TH</span></span>
           <span>
@@ -138,11 +45,27 @@ export function HeroSection({ onPsRowClick, psRowStatuses }) {
               {heroReady ? 'running' : heroWord}
             </span>
           </span>
-          <span><span className="k">uptime:</span> <span className="v">12y · still running</span></span>        </div>
+          <span><span className="k">uptime:</span> <span className="v">12y · still running</span></span>
+        </div>
       </div>
-      <div className="hero-middle">
-        <PsAuxPanel onPsRowClick={onPsRowClick} psRowStatuses={psRowStatuses} />
-        <LsIndexPanel />
+      <div className="hero-about" id="about">
+        <h2><span className="key">$</span> whoami</h2>
+        <p>
+          I lead cross-functional engineering teams and direct platform strategy.{' '}
+          <span className="accent">Lead Consultant at Thoughtworks</span>, currently embedded with an airline client where I technical lead a team of 20, improving ticketing flexibility and operational efficiency.
+        </p>
+        <p>
+          I build backend systems, cloud platforms, and the kind of infrastructure work nobody notices until it breaks. The stuff that lets other engineers ship faster.
+          I'm particularly focused on <span className="accent">Internal Developer Platforms</span>. The portals, pipelines, and golden paths that reduce cognitive load for engineering teams.
+        </p>
+        <p>
+          German-Filipino, raised in the US, now based in{' '}
+          <span className="accent">Chiang Mai</span>. Years in consulting taught me that simple systems age better, edge cases always show up eventually, and good engineering is as much about communication as code.
+          I enjoy solving messy operational problems, improving developer experience, and building systems other engineers actually enjoy working with.
+        </p>
+        <p className="muted">
+          Outside of client work: community lead for Thoughtworks' Platform Engineering and AI groups, conference speaker, active mentor, and the kind of person who builds a meeting-notes app on the side just because.
+        </p>
       </div>
       <HeroFoot />
     </section>

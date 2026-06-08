@@ -7,8 +7,8 @@ export function ContactSection({ onTalkClick }) {
   const { footerReady, footerRef } = useBootSequence();
 
   return (
-    <section className="contact" id="contact" data-screen-label="04 Contact">
-      <SectionLabel num="04" label="contact · ingress.yaml" />
+    <section className="contact" id="contact" data-screen-label="03 Contact">
+      <SectionLabel num="03" label="contact · ingress.yaml" />
       <h2 style={{ fontFamily: 'var(--mono)', fontSize: '14px', color: 'var(--text-muted)', fontWeight: 500, margin: '0 0 4px 0' }}>
         <span style={{ color: 'var(--text-dim)' }}>$</span> kubectl get ingress/contact
       </h2>

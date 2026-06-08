@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react';
 import { useHoverState } from '../../hooks/useHoverState.js';
 import { useTheme } from '../../hooks/useTheme.js';
 import { useScrollState } from '../../hooks/useScrollState.js';
@@ -29,19 +28,6 @@ export function Header() {
   const { toggleTheme } = useTheme();
   const scrolled = useScrollState(8);
   const [toggleHovered, setToggleHovered] = useHoverState();
-  const [showAnchors, setShowAnchors] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => {
-      const trigger = document.querySelector('[data-anchor-trigger="ls"]');
-      if (trigger) {
-        setShowAnchors(trigger.getBoundingClientRect().bottom < 72);
-      }
-    };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
 
   return (
     <header className={`site${scrolled ? ' scrolled' : ''}`} id="siteHeader">
@@ -55,9 +41,8 @@ export function Header() {
         michael.longerich<span className="slash"> // </span>
         <span className="role">tech lead · platform engineer</span>
       </a>
-      <nav className={`anchors${showAnchors ? ' visible' : ''}`} aria-label="Page sections" aria-hidden={!showAnchors}>
+      <nav className="anchors" aria-label="Page sections">
         <NavLink href="#diagram">/diagram</NavLink>
-        <NavLink href="#about">/about</NavLink>
         <NavLink href="#contact">/contact</NavLink>
       </nav>
       <button
