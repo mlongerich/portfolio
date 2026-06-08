@@ -2,11 +2,12 @@ import { SectionLabel } from '../common/SectionLabel.jsx';
 import { DiagramDesktop } from './DiagramDesktop.jsx';
 import { DiagramMobile } from './DiagramMobile.jsx';
 import { NodeDetailCard } from './NodeDetailCard.jsx';
+
 import { useProvisioning } from '../../hooks/useProvisioning.js';
 
-export function DiagramSection({ onTalkClick, nodeCard }) {
+export function DiagramSection({ onTalkClick, nodeCard, psRowStatuses }) {
   const { revealed, revealedArrows, nodeStatuses, progressLabel } = useProvisioning();
-  const { activeNodeId, pinnedNodeId, activeNodeEl, handlers } = nodeCard;
+  const { activeNodeId, pinnedNodeId, activeSource, activeNodeEl, handlers } = nodeCard;
 
   const diagramProps = { revealed, revealedArrows, nodeStatuses, activeNodeId, pinnedNodeId, handlers };
 
@@ -23,6 +24,8 @@ export function DiagramSection({ onTalkClick, nodeCard }) {
           pinnedNodeId={pinnedNodeId}
           activeNodeEl={activeNodeEl}
           nodeStatuses={nodeStatuses}
+          activeSource={activeSource}
+          psRowStatuses={psRowStatuses}
           onClose={handlers.dismissCard}
           onOutsideClick={handlers.dismissCard}
           onTalkClick={onTalkClick}

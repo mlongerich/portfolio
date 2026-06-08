@@ -1,0 +1,1811 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>mlongerich // system</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    --sans: "Inter", system-ui, -apple-system, sans-serif;
+  }
+  html[data-theme="dark"] {
+    --bg: #0d1117;
+    --bg-elev: #161b22;
+    --bg-card: #010409;
+    --boundary-fill: #161b22;
+    --boundary-stroke: #30363d;
+    --namespace-stroke: #444c56;
+    --node-fill: #161b22;
+    --node-stroke: #30363d;
+    --text: #e6edf3;
+    --text-muted: #8b949e;
+    --text-dim: #6e7681;
+    --arrow: #30363d;
+    --arrow-strong: #8b949e;
+    --pulse: #3fb950;
+    --warn: #d29922;
+    --accent: #58a6ff;
+    --flash: #f0f6fc;
+    --terminal-prompt: #3fb950;
+    --terminal-key: #79c0ff;
+    --terminal-value: #e6edf3;
+  }
+  html[data-theme="light"] {
+    --bg: #ffffff;
+    --bg-elev: #f6f8fa;
+    --bg-card: #ffffff;
+    --boundary-fill: #f6f8fa;
+    --boundary-stroke: #d0d7de;
+    --namespace-stroke: #afb8c1;
+    --node-fill: #ffffff;
+    --node-stroke: #d0d7de;
+    --text: #1f2328;
+    --text-muted: #57606a;
+    --text-dim: #818b98;
+    --arrow: #d0d7de;
+    --arrow-strong: #57606a;
+    --pulse: #1a7f37;
+    --warn: #9a6700;
+    --accent: #0969da;
+    --flash: #0969da;
+    --terminal-prompt: #1a7f37;
+    --terminal-key: #0969da;
+    --terminal-value: #1f2328;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.55;
+    transition: background-color 200ms ease, color 200ms ease;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* ---------- Header ---------- */
+  header.site {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    /* mobile-first */
+    padding: 14px 16px;
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-bottom: 1px solid transparent;
+    transition: border-color 200ms ease, background-color 200ms ease;
+  }
+  header.site.scrolled { border-bottom-color: var(--boundary-stroke); }
+  .brand { font-family: var(--mono); font-size: 14px; color: var(--text); letter-spacing: -0.01em; }
+  .brand .slash { color: var(--text-dim); padding: 0 2px; }
+  .brand .role { color: var(--text-muted); }
+  /* mobile-first: hidden by default, shown on wider viewports */
+  nav.anchors { display: none; gap: 22px; font-family: var(--mono); font-size: 12px; }
+  nav.anchors a { color: var(--text-muted); text-decoration: none; transition: color 150ms ease; }
+  nav.anchors a:hover { color: var(--text); }
+  .theme-toggle {
+    background: transparent; border: 1px solid var(--node-stroke);
+    color: var(--text-muted); padding: 6px 10px; border-radius: 4px;
+    cursor: pointer; font-family: var(--mono); font-size: 12px;
+    display: inline-flex; align-items: center; gap: 6px;
+    transition: border-color 150ms ease, color 150ms ease;
+  }
+  .theme-toggle:hover { color: var(--text); border-color: var(--accent); }
+  .theme-toggle svg { width: 12px; height: 12px; }
+  html[data-theme="dark"] .theme-toggle .sun { display: none; }
+  html[data-theme="light"] .theme-toggle .moon { display: none; }
+  /* (responsive overrides for header consolidated into the bottom min-width
+     block — see end of stylesheet) */
+
+  /* ---------- Layout ---------- */
+  main { padding-top: 60px; }
+  section { max-width: 1480px; margin: 0 auto; padding: 0 16px; }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    min-height: calc(100vh - 60px);
+    display: flex; flex-direction: column;
+    justify-content: space-between;
+    padding-top: 32px; padding-bottom: 0;
+  }
+  .hero-top { display: flex; flex-direction: column; gap: 24px; max-width: 880px; }
+  .hero .breadcrumb { font-family: var(--mono); font-size: 12px; color: var(--text-dim); letter-spacing: 0.02em; }
+  .hero h1 {
+    font-family: var(--mono); font-weight: 500;
+    font-size: clamp(28px, 4.4vw, 56px);
+    line-height: 1.1; letter-spacing: -0.02em;
+    margin: 0; color: var(--text);
+  }
+  .hero h1 .slash { color: var(--text-dim); }
+  .hero h1 .pulse-dot {
+    display: inline-block; width: 10px; height: 10px; border-radius: 50%;
+    background: var(--pulse); margin-left: 12px; vertical-align: middle;
+    animation: pulseDot 2s ease-in-out infinite;
+    transition: background-color 220ms ease;
+  }
+  .hero h1 .pulse-dot.loading {
+    background: var(--warn);
+    animation: warnPulse 0.9s ease-in-out infinite;
+  }
+  /* Hero meta status text — yellow while "loading" word is showing */
+  #heroStatus.loading { color: var(--warn) !important; }
+  @keyframes pulseDot { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(0.85); } }
+  .hero p.lede {
+    font-family: var(--sans); font-size: clamp(15px, 1.4vw, 18px);
+    color: var(--text-muted); max-width: 640px; margin: 0; text-wrap: pretty;
+  }
+  .hero-meta {
+    display: flex; gap: 28px; flex-wrap: wrap;
+    font-family: var(--mono); font-size: 12px; color: var(--text-muted);
+  }
+  .hero-meta .k { color: var(--text-dim); }
+  .hero-meta .v { color: var(--text); }
+  .scroll-cue {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    padding-bottom: 32px; font-family: var(--mono); font-size: 11px;
+    color: var(--text-dim); letter-spacing: 0.3em; text-transform: uppercase;
+  }
+  .scroll-cue .arrow {
+    width: 1px; height: 48px; background: var(--text-dim); position: relative;
+    margin-left: 10px; animation: scrollArrow 2.4s ease-in-out infinite;
+  }
+  .scroll-cue .arrow::after {
+    content: ""; position: absolute; bottom: 0; left: -3px;
+    border-left: 4px solid transparent; border-right: 4px solid transparent;
+    border-top: 5px solid var(--text-dim);
+  }
+  @keyframes scrollArrow {
+    0%, 100% { opacity: 0.3; transform: translateY(-4px); }
+    50% { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ---------- Section labels ---------- */
+  .section-label {
+    font-family: var(--mono); font-size: 12px; color: var(--text-dim);
+    margin-bottom: 24px; display: flex; align-items: center; gap: 16px;
+  }
+  .section-label .num { color: var(--accent); }
+  .section-label .line { flex: 1; height: 1px; background: var(--boundary-stroke); }
+  .section-label .progress {
+    font-variant-numeric: tabular-nums;
+    color: var(--text-muted);
+  }
+
+  /* ---------- Diagram ---------- */
+  .diagram-section {
+    padding-top: 60px;
+    padding-bottom: 80px;
+  }
+  .diagram-wrap {
+    position: relative;
+    overflow-x: visible;
+    overflow-y: visible;
+    margin: 0 -16px;
+    padding: 0 16px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .diagram-wrap::-webkit-scrollbar { height: 8px; }
+  .diagram-wrap::-webkit-scrollbar-thumb { background: var(--boundary-stroke); border-radius: 4px; }
+
+  /* mobile-first: show stacked vertical mobile diagram, hide desktop diagram */
+  .diagram-desktop { display: none; }
+  .diagram-mobile  { display: block; max-width: 460px; margin: 0 auto; }
+  .diagram-mobile .diagram-m { width: 100%; height: auto; display: block; overflow: visible; }
+  /* On mobile (and at any viewport viewing the mobile diagram) the flow
+     lines stay visible and pulses still animate, but the entire arrow
+     layer is non-interactive — no hover, no label, no cursor change. The
+     visible .arrow-path is stroked so it catches mouse events by default;
+     killing pointer-events on the whole layer is the only way to fully
+     disable hover. */
+  .diagram-mobile .layer-arrows { pointer-events: none; }
+  .diagram-mobile .arrow-label-group { display: none; }
+  /* SVG <text> defaults to a text-select cursor on mouseover — causes
+     the cursor to flicker when sweeping across a node. Force pointer
+     cursor on the whole interactive node, and disable cursor changes
+     on the decorative arrow layer. */
+  .diagram-mobile .node-group, .diagram-mobile .node-group * { cursor: pointer; }
+  .diagram-mobile .layer-arrows, .diagram-mobile .layer-arrows * { cursor: default; }
+
+  .diagram-inner {
+    position: relative;
+  }
+  svg.diagram {
+    width: 100%;
+    height: auto;
+    display: block;
+    overflow: visible;
+  }
+
+  /* ---- SVG primitives ---- */
+  .external .actor-box {
+    fill: var(--bg);
+    stroke: var(--text-dim);
+    stroke-width: 1;
+    stroke-dasharray: 4 3;
+  }
+  .external .actor-id { font-family: var(--mono); font-size: 11px; fill: var(--text-dim); }
+  .external .actor-title { font-family: var(--mono); font-size: 14px; font-weight: 500; fill: var(--text); }
+  .external .actor-sub { font-family: var(--mono); font-size: 11px; fill: var(--text-muted); }
+
+  .boundary {
+    fill: var(--boundary-fill);
+    stroke: var(--boundary-stroke);
+    stroke-width: 1.5;
+  }
+  .boundary-label { font-family: var(--mono); font-size: 13px; fill: var(--text-muted); }
+  .boundary-label .punct { fill: var(--text-dim); }
+
+  .namespace {
+    fill: none;
+    stroke: var(--namespace-stroke);
+    stroke-width: 1.5;
+    stroke-dasharray: 7 4;
+  }
+  .namespace-label { font-family: var(--mono); font-size: 12px; fill: var(--text-muted); }
+  .namespace-label .key { fill: var(--text-dim); }
+
+  /* Nodes (on top, fully opaque so paths behind are visually clipped) */
+  .node-group { cursor: pointer; }
+  .node-group .node-rect {
+    fill: var(--node-fill);
+    stroke: var(--node-stroke);
+    stroke-width: 1.25;
+    transition: stroke 180ms ease, filter 180ms ease;
+  }
+  .node-group:hover .node-rect,
+  .node-group.active .node-rect,
+  .node-group:focus-visible .node-rect {
+    stroke: var(--accent);
+    filter: drop-shadow(0 0 6px color-mix(in srgb, var(--accent) 45%, transparent));
+  }
+  .node-id     { font-family: var(--mono); font-size: 12px; fill: var(--text-dim); }
+  .node-title  { font-family: var(--mono); font-size: 16px; font-weight: 500; fill: var(--text); }
+  .node-sub    { font-family: var(--mono); font-size: 11px; fill: var(--text-muted); }
+  .node-status text { font-family: var(--mono); font-size: 10px; fill: var(--text-muted); }
+  .node-status .dot { fill: var(--pulse); }
+  .node-status .dot-warn { fill: var(--warn); }
+  /* Loading → ready state swap. Default state is "loading"; JS flips
+     data-state to "ready" after the node reveals.
+     IMPORTANT: keyframe animations override declared opacity, so we
+     must DISABLE the green dot's status-pulse while loading and the
+     yellow dot's warn-pulse while ready — otherwise both circles
+     animate in their off state and we get a green/yellow/gray flicker. */
+  .node-status .dot, .node-status .ready-txt { opacity: 0; transition: opacity 220ms ease; }
+  .node-status .dot-warn, .node-status .loading-txt { opacity: 1; transition: opacity 220ms ease; }
+  .node-status[data-state="loading"] .status-pulse { animation: none; }
+  .node-status[data-state="ready"] .warn-pulse { animation: none; }
+  .node-status[data-state="ready"] .dot,
+  .node-status[data-state="ready"] .ready-txt { opacity: 1; }
+  .node-status[data-state="ready"] .dot-warn,
+  .node-status[data-state="ready"] .loading-txt { opacity: 0; }
+  .node-status .loading-txt { fill: var(--warn); }
+  .warn-pulse { animation: warnPulse 0.9s ease-in-out infinite; }
+  @keyframes warnPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+  /* ---- Arrows (drawn behind nodes — dim by default) ---- */
+  .arrow-path {
+    fill: none;
+    stroke: var(--arrow);
+    stroke-width: 1;
+    opacity: 0.55;
+    transition: stroke 180ms ease, stroke-width 180ms ease, opacity 180ms ease;
+  }
+  .arrow-hit {
+    fill: none;
+    stroke: transparent;
+    stroke-width: 18;
+    /* Pointer-events disabled until the arrow has been "provisioned"
+       (both endpoints revealed). Prevents hover from triggering on an
+       invisible line. */
+    pointer-events: none;
+    cursor: pointer;
+  }
+  .arr.in .arrow-hit { pointer-events: stroke; }
+  /* When the back-group is active, brighten visible path */
+  .arr.active .arrow-path {
+    stroke: var(--arrow-strong);
+    stroke-width: 1.5;
+    opacity: 1;
+  }
+
+  /* Arrow labels — sit ABOVE nodes, hidden by default */
+  .arrow-label-group {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 160ms ease;
+  }
+  .arrow-label-group.active { opacity: 1; }
+  .arrow-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    fill: var(--text);
+    /* paint-order trick: stroke renders first underneath the fill, masking the path behind */
+    paint-order: stroke;
+    stroke: var(--bg);
+    stroke-width: 4px;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+  }
+
+  /* ---- Pulses (each pulse fades in when its arrow's both endpoints exist) ---- */
+  .pulse-dot-svg {
+    fill: var(--pulse);
+    opacity: 0;
+    transition: opacity 600ms ease;
+  }
+  .pulse-dot-svg.live { opacity: 0.5; }
+
+  /* ---- Provisioning animation states ---- */
+  .prov-fade { opacity: 0; transition: opacity 380ms ease; }
+  .prov-fade.in { opacity: 1; }
+
+  .prov-draw {
+    stroke-dasharray: var(--len, 1000);
+    stroke-dashoffset: var(--len, 1000);
+    transition: stroke-dashoffset 700ms ease-out;
+  }
+  .prov-draw.in { stroke-dashoffset: 0; }
+
+  .prov-arrow {
+    stroke-dasharray: var(--len, 600);
+    stroke-dashoffset: var(--len, 600);
+    transition: stroke-dashoffset 750ms ease-out;
+  }
+  .prov-arrow.in { stroke-dashoffset: 0; }
+
+  /* Flash only fires when .in is added — fixes the bug where the
+     animation ran on page-load while elements were still opacity 0 */
+  .prov-flash.in .node-rect {
+    animation: nodeFlash 850ms ease-out;
+  }
+  @keyframes nodeFlash {
+    0%   { stroke: var(--flash); filter: drop-shadow(0 0 12px var(--flash)); }
+    60%  { stroke: var(--flash); filter: drop-shadow(0 0 4px var(--flash)); }
+    100% { stroke: var(--node-stroke); filter: none; }
+  }
+
+  .status-pulse { animation: statusPulse 2.4s ease-in-out infinite; }
+  @keyframes statusPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+
+  /* ---------- Detail card ---------- */
+  .detail-card {
+    position: fixed; z-index: 40;
+    pointer-events: none;
+    opacity: 0; transform: translateY(6px);
+    transition: opacity 160ms ease, transform 160ms ease;
+    width: 360px; max-width: calc(100vw - 32px);
+    background: var(--bg-card);
+    border: 1px solid var(--boundary-stroke);
+    border-radius: 6px; overflow: hidden;
+    box-shadow: 0 24px 60px -20px rgba(0,0,0,0.5);
+  }
+  .detail-card.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+  .detail-card .term-chrome {
+    display: flex; align-items: center; gap: 6px;
+    padding: 8px 12px; border-bottom: 1px solid var(--boundary-stroke);
+    background: var(--bg-elev);
+  }
+  .term-chrome .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--text-dim); opacity: 0.5; }
+  .term-chrome .term-title { margin-left: 8px; font-family: var(--mono); font-size: 11px; color: var(--text-muted); }
+  .term-chrome .close {
+    margin-left: auto; background: transparent; border: none;
+    color: var(--text-dim); font-family: var(--mono); font-size: 14px;
+    cursor: pointer; padding: 0 4px;
+  }
+  .term-chrome .close:hover { color: var(--text); }
+  .detail-card pre {
+    margin: 0; padding: 14px 16px 16px;
+    font-family: var(--mono); font-size: 12px; line-height: 1.65;
+    color: var(--terminal-value); white-space: pre-wrap; word-break: break-word;
+  }
+  .detail-card .prompt { color: var(--terminal-prompt); }
+  .detail-card .key { color: var(--terminal-key); }
+  .detail-card .muted { color: var(--text-muted); }
+  .detail-card .running { color: var(--pulse); }
+
+  /* ---------- About / Contact ---------- */
+  .about { padding-top: 64px; padding-bottom: 64px; max-width: 880px; }
+  .about h2 { font-family: var(--mono); font-size: 14px; color: var(--text-muted); font-weight: 500; margin: 0 0 28px 0; }
+  .about h2 .key { color: var(--text-dim); }
+  .about p {
+    font-family: var(--sans); font-size: clamp(17px, 1.5vw, 20px);
+    line-height: 1.55; color: var(--text); margin: 0 0 22px 0; text-wrap: pretty;
+  }
+  .about p .accent { color: var(--accent); }
+  .about p.muted { color: var(--text-muted); font-size: clamp(15px, 1.3vw, 17px); }
+
+  .contact { padding-top: 40px; padding-bottom: 96px; }
+  .contact-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 18px; margin-top: 28px;
+  }
+  .contact-card {
+    border: 1px solid var(--boundary-stroke); border-radius: 6px;
+    padding: 22px; background: var(--bg-elev);
+    transition: border-color 180ms ease, transform 180ms ease;
+    text-decoration: none; color: inherit; display: block;
+  }
+  .contact-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .contact-card .label { font-family: var(--mono); font-size: 11px; color: var(--text-dim); margin-bottom: 8px; }
+  .contact-card .value { font-family: var(--mono); font-size: 15px; color: var(--text); word-break: break-all; }
+  .contact-card:hover .value { color: var(--accent); }
+
+  footer.site {
+    border-top: 1px solid var(--boundary-stroke); padding: 24px 0 32px;
+    font-family: var(--mono); font-size: 11px; color: var(--text-dim);
+    display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px;
+  }
+
+  /* ---------- Progressive enhancement: tablet+ ---------- */
+  @media (min-width: 720px) {
+    header.site  { padding: 18px 32px; }
+    nav.anchors  { display: flex; }
+    main         { padding-top: 70px; }
+    section      { padding: 0 32px; }
+    .hero        { min-height: calc(100vh - 70px); padding-top: 60px; }
+    .diagram-section { padding-top: 80px; padding-bottom: 120px; }
+    .diagram-wrap    { margin: 0 -32px; padding: 0 32px; }
+    .about       { padding-top: 100px; padding-bottom: 100px; }
+    .contact     { padding-top: 60px; padding-bottom: 140px; }
+  }
+  /* ---------- Diagram swap: vertical → horizontal ----------
+     The horizontal diagram is FIXED at its design width — it does NOT
+     scale with the viewport. We only swap to it once the viewport is
+     wide enough to hold that width plus section padding, so the user
+     never gets horizontal scroll. Below this threshold, the vertical
+     mobile diagram stays on (with flow-line hover + labels disabled
+     — handled mobile-first above). */
+  @media (min-width: 1280px) {
+    .diagram-desktop { display: block; }
+    .diagram-mobile  { display: none; }
+    .diagram-desktop .diagram-inner { width: 1200px; margin: 0 auto; }
+  }
+  /* Wider viewports get the diagram closer to its native viewBox size. */
+  @media (min-width: 1480px) {
+    .diagram-desktop .diagram-inner { width: 1416px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .prov-fade, .prov-draw, .prov-arrow { transition: none; opacity: 1; stroke-dashoffset: 0; }
+    .prov-flash.in .node-rect, .hero h1 .pulse-dot, .status-pulse, .scroll-cue .arrow { animation: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site" id="siteHeader">
+  <div class="brand">
+    mlongerich<span class="slash"> // </span><span class="role">tech lead · platform engineer</span>
+  </div>
+  <nav class="anchors">
+    <a href="#diagram">/diagram</a>
+    <a href="#about">/about</a>
+    <a href="#contact">/contact</a>
+  </nav>
+  <button class="theme-toggle" id="themeToggle" aria-label="Toggle color theme">
+    <svg class="moon" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M11.5 9.5A4.5 4.5 0 0 1 6.5 4.5c0-.5.1-1 .25-1.4A5.5 5.5 0 1 0 13 9.2c-.45.2-.95.3-1.5.3Z" fill="currentColor"/></svg>
+    <svg class="sun" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="3" fill="currentColor"/><g stroke="currentColor" stroke-width="1.2" stroke-linecap="round"><path d="M8 1.5v1.8"/><path d="M8 12.7v1.8"/><path d="M1.5 8h1.8"/><path d="M12.7 8h1.8"/><path d="M3.4 3.4l1.3 1.3"/><path d="M11.3 11.3l1.3 1.3"/><path d="M3.4 12.6l1.3-1.3"/><path d="M11.3 4.7l1.3-1.3"/></g></svg>
+    <span>theme</span>
+  </button>
+</header>
+
+<main>
+
+  <!-- ============== HERO ============== -->
+  <section class="hero" id="hero" data-screen-label="01 Hero">
+    <div class="hero-top">
+      <div class="breadcrumb">/ system / boundary / readme.md</div>
+      <h1>mlongerich<span class="slash"> // </span>system<span class="pulse-dot loading" id="heroDot" aria-hidden="true"></span></h1>
+      <p class="lede">
+        Lead Consultant at Thoughtworks. Platform engineering, infrastructure, and tech leadership — read as an architecture diagram. Hover any node to inspect, hover any connection to see its role.
+      </p>
+      <div class="hero-meta">
+        <span><span class="k">location:</span> <span class="v">Chiang Mai, TH</span></span>
+        <span><span class="k">status:</span> <span class="v loading" id="heroStatus" style="color:var(--pulse)">running</span></span>
+        <span><span class="k">version:</span> <span class="v">v12.y · 2026</span></span>
+        <span><span class="k">uptime:</span> <span class="v">12y</span></span>
+      </div>
+    </div>
+    <div class="scroll-cue">
+      <span>scroll &nbsp;to&nbsp; provision</span>
+      <span class="arrow" aria-hidden="true"></span>
+    </div>
+  </section>
+
+  <!-- ============== DIAGRAM ============== -->
+  <section class="diagram-section" id="diagram" data-screen-label="02 Architecture">
+    <div class="section-label">
+      <span class="num">02</span>
+      <span>architecture · ./apply --auto-approve</span>
+      <span class="line"></span>
+      <span class="progress" id="progLabel">apply 0% · waiting · scroll to provision</span>
+    </div>
+
+    <div class="diagram-wrap" id="diagramWrap">
+      <div class="diagram-desktop">
+       <div class="diagram-inner">
+        <svg class="diagram" id="diagramSvg" viewBox="0 0 1440 1320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Architecture diagram of Michael Longerich's career and projects">
+
+          <defs>
+            <marker id="arrowhead" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse" markerUnits="userSpaceOnUse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="context-stroke" />
+            </marker>
+          </defs>
+
+          <!-- ===================================================
+               LAYER 1 — boundary (background-most)
+               =================================================== -->
+          <g class="layer-boundary">
+            <rect class="boundary prov-draw" data-prov="boundary" x="60" y="160" width="1320" height="1120" rx="8" ry="8" />
+            <text class="boundary-label prov-fade" data-prov="boundary-label" x="80" y="184">
+              <tspan class="punct">// </tspan>system <tspan class="punct">·</tspan> mlongerich <tspan class="punct">·</tspan> region: <tspan fill="var(--text)">ap-southeast-1</tspan>
+            </text>
+          </g>
+
+          <!-- ===================================================
+               LAYER 2 — namespace rects + labels
+               =================================================== -->
+          <g class="layer-namespaces">
+            <rect class="namespace prov-draw" data-prov="ns-leadership"   x="100" y="210" width="1240" height="150" rx="6" ry="6" />
+            <text class="namespace-label prov-fade" data-prov="ns-leadership-label" x="118" y="234">
+              <tspan class="key">namespace:</tspan> leadership
+            </text>
+
+            <rect class="namespace prov-draw" data-prov="ns-engineering" x="100" y="400" width="1240" height="200" rx="6" ry="6" />
+            <text class="namespace-label prov-fade" data-prov="ns-engineering-label" x="118" y="424">
+              <tspan class="key">namespace:</tspan> engineering
+            </text>
+
+            <rect class="namespace prov-draw" data-prov="ns-products"    x="100" y="640" width="1240" height="200" rx="6" ry="6" />
+            <text class="namespace-label prov-fade" data-prov="ns-products-label" x="118" y="664">
+              <tspan class="key">namespace:</tspan> products
+            </text>
+
+            <rect class="namespace prov-draw" data-prov="ns-obs"         x="100" y="880" width="1240" height="180" rx="6" ry="6" />
+            <text class="namespace-label prov-fade" data-prov="ns-obs-label" x="118" y="904">
+              <tspan class="key">namespace:</tspan> observability <tspan class="key" dx="6">·</tspan> spans all layers
+            </text>
+          </g>
+
+          <!-- ===================================================
+               LAYER 3 — Arrows (paths + hit regions) — BEHIND nodes
+               =================================================== -->
+          <g class="layer-arrows">
+            <!-- 1. clients → tech-lead -->
+            <g class="arr" data-arrow="clients-tech">
+              <path id="arr-clients-tech" class="arrow-path prov-arrow" data-prov="arr-clients-tech"
+                    d="M 280 105 L 620 260" marker-end="url(#arrowhead)" />
+              <path class="arrow-hit" data-arrow="clients-tech" d="M 280 105 L 620 260" />
+            </g>
+            <!-- 2. community → tech-lead -->
+            <g class="arr" data-arrow="comm-tech">
+              <path id="arr-comm-tech" class="arrow-path prov-arrow" data-prov="arr-comm-tech"
+                    d="M 720 105 L 720 260" marker-end="url(#arrowhead)" />
+              <path class="arrow-hit" data-arrow="comm-tech" d="M 720 105 L 720 260" />
+            </g>
+            <!-- 3. tech-lead → platform-eng -->
+            <g class="arr" data-arrow="tech-plat">
+              <path id="arr-tech-plat" class="arrow-path prov-arrow" data-prov="arr-tech-plat"
+                    d="M 620 340 L 300 455" marker-end="url(#arrowhead)" />
+              <path class="arrow-hit" data-arrow="tech-plat" d="M 620 340 L 300 455" />
+            </g>
+            <!-- 4. tech-lead → infra-eng -->
+            <g class="arr" data-arrow="tech-infra">
+              <path id="arr-tech-infra" class="arrow-path prov-arrow" data-prov="arr-tech-infra"
+                    d="M 720 340 L 720 455" marker-end="url(#arrowhead)" />
+              <path class="arrow-hit" data-arrow="tech-infra" d="M 720 340 L 720 455" />
+            </g>
+            <!-- 5. tech-lead → ai-tooling -->
+            <g class="arr" data-arrow="tech-ai">
+              <path id="arr-tech-ai" class="arrow-path prov-arrow" data-prov="arr-tech-ai"
+                    d="M 820 340 L 1140 455" marker-end="url(#arrowhead)" />
+              <path class="arrow-hit" data-arrow="tech-ai" d="M 820 340 L 1140 455" />
+            </g>
+            <!-- 6. platform-eng → airline -->
+            <g class="arr" data-arrow="plat-air">
+              <path id="arr-plat-air" class="arrow-path prov-arrow" data-prov="arr-plat-air"
+                    d="M 300 575 L 300 695" marker-end="url(#arrowhead)" />
+              <path class="arrow-hit" data-arrow="plat-air" d="M 300 575 L 300 695" />
+            </g>
+            <!-- 7. infra-eng → airline -->
+            <g class="arr" data-arrow="infra-air">
+              <path id="arr-infra-air" class="arrow-path prov-arrow" data-prov="arr-infra-air"
+                    d="M 620 575 L 400 695" marker-end="url(#arrowhead)" />
+              <path class="arrow-hit" data-arrow="infra-air" d="M 620 575 L 400 695" />
+            </g>
+            <!-- 8. ai-tooling → dashnote -->
+            <g class="arr" data-arrow="ai-dash">
+              <path id="arr-ai-dash" class="arrow-path prov-arrow" data-prov="arr-ai-dash"
+                    d="M 1080 575 L 880 695" marker-end="url(#arrowhead)" />
+              <path class="arrow-hit" data-arrow="ai-dash" d="M 1080 575 L 880 695" />
+            </g>
+            <!-- 9. platform-eng → pfa-app (long diagonal across layer) -->
+            <g class="arr" data-arrow="plat-pfa">
+              <path id="arr-plat-pfa" class="arrow-path prov-arrow" data-prov="arr-plat-pfa"
+                    d="M 380 575 L 1080 695" marker-end="url(#arrowhead)" stroke-dasharray="4 3" />
+              <path class="arrow-hit" data-arrow="plat-pfa" d="M 380 575 L 1080 695" />
+            </g>
+            <!-- 10. ai-tooling → community-out (straight down — both on right side now) -->
+            <g class="arr" data-arrow="ai-comm">
+              <path id="arr-ai-comm" class="arrow-path prov-arrow" data-prov="arr-ai-comm"
+                    d="M 1140 575 L 1140 935" marker-end="url(#arrowhead)" />
+              <path class="arrow-hit" data-arrow="ai-comm" d="M 1140 575 L 1140 935" />
+            </g>
+            <!-- 11. community-out → mentees (short sweep up the right side, lands on mentees' right edge) -->
+            <g class="arr" data-arrow="comm-ment">
+              <path id="arr-comm-ment" class="arrow-path prov-arrow" data-prov="arr-comm-ment"
+                    d="M 1260 985 C 1410 985, 1410 70, 1260 70"
+                    marker-end="url(#arrowhead)" />
+              <path class="arrow-hit" data-arrow="comm-ment" d="M 1260 985 C 1410 985, 1410 70, 1260 70" />
+            </g>
+            <!-- 12. speaking → community (short sweep up the left side, lands on community's left edge) -->
+            <g class="arr" data-arrow="speak-comm">
+              <path id="arr-speak-comm" class="arrow-path prov-arrow" data-prov="arr-speak-comm"
+                    d="M 180 985 C 30 985, 30 70, 620 70"
+                    marker-end="url(#arrowhead)" stroke-dasharray="4 3" />
+              <path class="arrow-hit" data-arrow="speak-comm" d="M 180 985 C 30 985, 30 70, 620 70" />
+            </g>
+          </g>
+
+          <!-- ===================================================
+               LAYER 4 — Pulses (also behind nodes; nodes mask them visually)
+               =================================================== -->
+          <g class="layer-pulses" id="pulses">
+            <circle class="pulse-dot-svg" data-pulse-arrow="clients-tech" r="2.5"><animateMotion dur="3.4s" repeatCount="indefinite" begin="0s"><mpath href="#arr-clients-tech"/></animateMotion></circle>
+            <circle class="pulse-dot-svg" data-pulse-arrow="comm-tech" r="2.5"><animateMotion dur="4.0s" repeatCount="indefinite" begin="0.4s"><mpath href="#arr-comm-tech"/></animateMotion></circle>
+            <circle class="pulse-dot-svg" data-pulse-arrow="tech-plat" r="2.5"><animateMotion dur="2.8s" repeatCount="indefinite" begin="0.2s"><mpath href="#arr-tech-plat"/></animateMotion></circle>
+            <circle class="pulse-dot-svg" data-pulse-arrow="tech-infra" r="2.5"><animateMotion dur="2.6s" repeatCount="indefinite" begin="0.6s"><mpath href="#arr-tech-infra"/></animateMotion></circle>
+            <circle class="pulse-dot-svg" data-pulse-arrow="tech-ai" r="2.5"><animateMotion dur="3.0s" repeatCount="indefinite" begin="0.3s"><mpath href="#arr-tech-ai"/></animateMotion></circle>
+            <circle class="pulse-dot-svg" data-pulse-arrow="plat-air" r="2.5"><animateMotion dur="2.6s" repeatCount="indefinite" begin="0.8s"><mpath href="#arr-plat-air"/></animateMotion></circle>
+            <circle class="pulse-dot-svg" data-pulse-arrow="infra-air" r="2.5"><animateMotion dur="3.2s" repeatCount="indefinite" begin="0.5s"><mpath href="#arr-infra-air"/></animateMotion></circle>
+            <circle class="pulse-dot-svg" data-pulse-arrow="ai-dash" r="2.5"><animateMotion dur="3.0s" repeatCount="indefinite" begin="0.9s"><mpath href="#arr-ai-dash"/></animateMotion></circle>
+            <circle class="pulse-dot-svg" data-pulse-arrow="plat-pfa" r="2.5"><animateMotion dur="5.6s" repeatCount="indefinite" begin="1.2s"><mpath href="#arr-plat-pfa"/></animateMotion></circle>
+            <circle class="pulse-dot-svg" data-pulse-arrow="ai-comm" r="2.5"><animateMotion dur="5.0s" repeatCount="indefinite" begin="0.0s"><mpath href="#arr-ai-comm"/></animateMotion></circle>
+            <circle class="pulse-dot-svg" data-pulse-arrow="comm-ment" r="2.5"><animateMotion dur="8.0s" repeatCount="indefinite" begin="0.0s"><mpath href="#arr-comm-ment"/></animateMotion></circle>
+            <circle class="pulse-dot-svg" data-pulse-arrow="speak-comm" r="2.5"><animateMotion dur="6.4s" repeatCount="indefinite" begin="0.5s"><mpath href="#arr-speak-comm"/></animateMotion></circle>
+          </g>
+
+          <!-- ===================================================
+               LAYER 5 — Nodes (drawn ON TOP of arrows + pulses)
+               =================================================== -->
+          <g class="layer-nodes">
+
+            <!-- tech-lead -->
+            <g class="node-group prov-fade prov-flash" data-prov="node-tech-lead" data-node="tech-lead" tabindex="0" role="button" aria-label="Tech Leadership node — open details">
+              <rect class="node-rect" x="560" y="260" width="320" height="80" rx="5" ry="5" />
+              <text class="node-id" x="576" y="282">tech-lead</text>
+              <text class="node-title" x="576" y="306">Tech Leadership</text>
+              <text class="node-sub" x="576" y="324">Squad of 20 · Thoughtworks · since 2020</text>
+              <g class="node-status" data-state="loading">
+                <circle class="dot-warn warn-pulse" cx="860" cy="278" r="3" />
+                <circle class="dot status-pulse" cx="860" cy="278" r="3" />
+                <text class="loading-txt" x="846" y="282" text-anchor="end">initializing</text>
+                <text class="ready-txt" x="846" y="282" text-anchor="end">running</text>
+              </g>
+            </g>
+
+            <!-- platform-eng -->
+            <g class="node-group prov-fade prov-flash" data-prov="node-platform-eng" data-node="platform-eng" tabindex="0" role="button" aria-label="Platform Engineering node — open details">
+              <rect class="node-rect" x="140" y="455" width="320" height="120" rx="5" ry="5" />
+              <text class="node-id" x="156" y="477">platform-eng</text>
+              <text class="node-title" x="156" y="501">Platform Engineering</text>
+              <text class="node-sub" x="156" y="521">Internal Developer Platforms</text>
+              <text class="node-sub" x="156" y="538">developer experience · cloud-native</text>
+              <text class="node-sub" x="156" y="558" fill="var(--text-dim)">▸ talk: "Our adventure in building…"</text>
+              <g class="node-status" data-state="loading">
+                <circle class="dot-warn warn-pulse" cx="440" cy="473" r="3" />
+                <circle class="dot status-pulse" cx="440" cy="473" r="3" />
+                <text class="loading-txt" x="426" y="477" text-anchor="end">deploying</text>
+                <text class="ready-txt" x="426" y="477" text-anchor="end">running</text>
+              </g>
+            </g>
+
+            <!-- infra-eng -->
+            <g class="node-group prov-fade prov-flash" data-prov="node-infra-eng" data-node="infra-eng" tabindex="0" role="button" aria-label="Infrastructure node — open details">
+              <rect class="node-rect" x="560" y="455" width="320" height="120" rx="5" ry="5" />
+              <text class="node-id" x="576" y="477">infra-eng</text>
+              <text class="node-title" x="576" y="501">Infrastructure</text>
+              <text class="node-sub" x="576" y="521">Kubernetes · Terraform · Helm</text>
+              <text class="node-sub" x="576" y="538">AWS · Azure · CI/CD · security</text>
+              <text class="node-sub" x="576" y="558" fill="var(--text-dim)">▸ legacy modernisation → greenfield</text>
+              <g class="node-status" data-state="loading">
+                <circle class="dot-warn warn-pulse" cx="860" cy="473" r="3" />
+                <circle class="dot status-pulse" cx="860" cy="473" r="3" />
+                <text class="loading-txt" x="846" y="477" text-anchor="end">provisioning</text>
+                <text class="ready-txt" x="846" y="477" text-anchor="end">running</text>
+              </g>
+            </g>
+
+            <!-- ai-tooling -->
+            <g class="node-group prov-fade prov-flash" data-prov="node-ai-tooling" data-node="ai-tooling" tabindex="0" role="button" aria-label="AI and Automation node — open details">
+              <rect class="node-rect" x="980" y="455" width="320" height="120" rx="5" ry="5" />
+              <text class="node-id" x="996" y="477">ai-tooling</text>
+              <text class="node-title" x="996" y="501">AI &amp; Automation</text>
+              <text class="node-sub" x="996" y="521">Claude · OpenAI · agentic systems</text>
+              <text class="node-sub" x="996" y="538">community lead — TW AI</text>
+              <text class="node-sub" x="996" y="558" fill="var(--text-dim)">▸ workflows, tooling integration</text>
+              <g class="node-status" data-state="loading">
+                <circle class="dot-warn warn-pulse" cx="1280" cy="473" r="3" />
+                <circle class="dot status-pulse" cx="1280" cy="473" r="3" />
+                <text class="loading-txt" x="1266" y="477" text-anchor="end">starting</text>
+                <text class="ready-txt" x="1266" y="477" text-anchor="end">running</text>
+              </g>
+            </g>
+
+            <!-- airline -->
+            <g class="node-group prov-fade prov-flash" data-prov="node-airline" data-node="airline" tabindex="0" role="button" aria-label="Airline client deployment — open details">
+              <rect class="node-rect" x="140" y="695" width="320" height="120" rx="5" ry="5" />
+              <text class="node-id" x="156" y="717">deployment/airline</text>
+              <text class="node-title" x="156" y="741">Airline Client</text>
+              <text class="node-sub" x="156" y="761">ticketing flexibility · ops</text>
+              <text class="node-sub" x="156" y="778">team: 20 — devs · QA · BA · PO · SM</text>
+              <text class="node-sub" x="156" y="798" fill="var(--text-dim)">▸ production · active</text>
+              <g class="node-status" data-state="loading">
+                <circle class="dot-warn warn-pulse" cx="440" cy="713" r="3" />
+                <circle class="dot status-pulse" cx="440" cy="713" r="3" />
+                <text class="loading-txt" x="426" y="717" text-anchor="end">rolling out</text>
+                <text class="ready-txt" x="426" y="717" text-anchor="end">active</text>
+              </g>
+            </g>
+
+            <!-- dashnote -->
+            <g class="node-group prov-fade prov-flash" data-prov="node-dashnote" data-node="dashnote" tabindex="0" role="button" aria-label="Dashnote project — open details">
+              <rect class="node-rect" x="560" y="695" width="320" height="120" rx="5" ry="5" />
+              <text class="node-id" x="576" y="717">pod/dashnote</text>
+              <text class="node-title" x="576" y="741">Dashnote</text>
+              <text class="node-sub" x="576" y="761">React Native · Supabase · Whisper</text>
+              <text class="node-sub" x="576" y="778">audio → AI meeting notes</text>
+              <text class="node-sub" x="576" y="798" fill="var(--text-dim)">▸ solo build · in development</text>
+              <g class="node-status" data-state="loading">
+                <circle class="dot-warn warn-pulse" cx="860" cy="713" r="3" />
+                <circle class="dot status-pulse" cx="860" cy="713" r="3" />
+                <text class="loading-txt" x="846" y="717" text-anchor="end">scheduled</text>
+                <text class="ready-txt" x="846" y="717" text-anchor="end">building</text>
+              </g>
+            </g>
+
+            <!-- pfa-app -->
+            <g class="node-group prov-fade prov-flash" data-prov="node-pfa-app" data-node="pfa-app" tabindex="0" role="button" aria-label="PFA Donation App — open details">
+              <rect class="node-rect" x="980" y="695" width="320" height="120" rx="5" ry="5" />
+              <text class="node-id" x="996" y="717">pod/pfa-app</text>
+              <text class="node-title" x="996" y="741">PFA Donation App</text>
+              <text class="node-sub" x="996" y="761">fundraising · mission project</text>
+              <text class="node-sub" x="996" y="778">full-stack web</text>
+              <text class="node-sub" x="996" y="798" fill="var(--text-dim)">▸ nonprofit · in development</text>
+              <g class="node-status" data-state="loading">
+                <circle class="dot-warn warn-pulse" cx="1280" cy="713" r="3" />
+                <circle class="dot status-pulse" cx="1280" cy="713" r="3" />
+                <text class="loading-txt" x="1266" y="717" text-anchor="end">scheduled</text>
+                <text class="ready-txt" x="1266" y="717" text-anchor="end">building</text>
+              </g>
+            </g>
+
+            <!-- community-out (right side — short hops to ai-tooling above and mentees top-right) -->
+            <g class="node-group prov-fade prov-flash" data-prov="node-community-out" data-node="community-out" tabindex="0" role="button" aria-label="Community and mentoring — open details">
+              <rect class="node-rect" x="800" y="935" width="460" height="100" rx="5" ry="5" />
+              <text class="node-id" x="816" y="957">service/community-out</text>
+              <text class="node-title" x="816" y="981">Community &amp; Mentoring</text>
+              <text class="node-sub" x="816" y="1001">platform-eng lead · ai lead · active mentor</text>
+              <text class="node-sub" x="816" y="1019" fill="var(--text-dim)">▸ engineer growth · knowledge transfer</text>
+              <g class="node-status" data-state="loading">
+                <circle class="dot-warn warn-pulse" cx="1240" cy="953" r="3" />
+                <circle class="dot status-pulse" cx="1240" cy="953" r="3" />
+                <text class="loading-txt" x="1226" y="957" text-anchor="end">spinning up</text>
+                <text class="ready-txt" x="1226" y="957" text-anchor="end">running</text>
+              </g>
+            </g>
+
+            <!-- speaking (left side — short hop up to community actor above) -->
+            <g class="node-group prov-fade prov-flash" data-prov="node-speaking" data-node="speaking" tabindex="0" role="button" aria-label="Talks and presence — open details">
+              <rect class="node-rect" x="180" y="935" width="460" height="100" rx="5" ry="5" />
+              <text class="node-id" x="196" y="957">ingress/speaking</text>
+              <text class="node-title" x="196" y="981">Talks &amp; Presence</text>
+              <text class="node-sub" x="196" y="1001">conference talk · YouTube · LinkedIn</text>
+              <text class="node-sub" x="196" y="1019" fill="var(--text-dim)">▸ "Our adventure in building an IDP"</text>
+              <g class="node-status" data-state="loading">
+                <circle class="dot-warn warn-pulse" cx="620" cy="953" r="3" />
+                <circle class="dot status-pulse" cx="620" cy="953" r="3" />
+                <text class="loading-txt" x="606" y="957" text-anchor="end">pending</text>
+                <text class="ready-txt" x="606" y="957" text-anchor="end">available</text>
+              </g>
+            </g>
+          </g>
+
+          <!-- ===================================================
+               LAYER 6 — External actors (outside boundary, on top)
+               =================================================== -->
+          <g class="layer-actors">
+            <g class="external prov-fade" data-prov="actor-clients">
+              <rect class="actor-box" x="180" y="35" width="200" height="70" rx="4" ry="4" />
+              <text class="actor-id" x="194" y="58">{ external }</text>
+              <text class="actor-title" x="194" y="80">Clients &amp; Employers</text>
+              <text class="actor-sub" x="194" y="97">↳ hire / engage</text>
+            </g>
+            <g class="external prov-fade" data-prov="actor-community">
+              <rect class="actor-box" x="620" y="35" width="200" height="70" rx="4" ry="4" />
+              <text class="actor-id" x="634" y="58">{ external }</text>
+              <text class="actor-title" x="634" y="80">Community</text>
+              <text class="actor-sub" x="634" y="97">↳ platform · ai · talks</text>
+            </g>
+            <g class="external prov-fade" data-prov="actor-mentees">
+              <rect class="actor-box" x="1060" y="35" width="200" height="70" rx="4" ry="4" />
+              <text class="actor-id" x="1074" y="58">{ external }</text>
+              <text class="actor-title" x="1074" y="80">Mentees</text>
+              <text class="actor-sub" x="1074" y="97">↳ engineers, growing</text>
+            </g>
+          </g>
+
+          <!-- ===================================================
+               LAYER 7 — Arrow labels (ABOVE nodes, hidden until path hovered)
+               Each label sits at the geometric midpoint of its arrow.
+               If the midpoint falls inside another node, the label is
+               moved to the 1/4 point (halfway between start and midpoint).
+               =================================================== -->
+          <g class="layer-arrow-labels">
+            <!-- clients(280,105) → tech-lead(620,260). Midpoint (450,183) sits
+                 on top of the boundary label "// system · mlongerich · region"
+                 — unreadable. Use the 25% point instead. -->
+            <g class="arrow-label-group" data-arrow="clients-tech">
+              <text class="arrow-label" x="365" y="148" text-anchor="middle">hire / engage</text>
+            </g>
+            <!-- comm(720,105) → tech-lead(720,260); mid (720, 183) -->
+            <g class="arrow-label-group" data-arrow="comm-tech">
+              <text class="arrow-label" x="720" y="187" text-anchor="middle">audience</text>
+            </g>
+            <!-- tech-lead(620,340) → plat(300,455); mid (460, 398) -->
+            <g class="arrow-label-group" data-arrow="tech-plat">
+              <text class="arrow-label" x="460" y="402" text-anchor="middle">directs</text>
+            </g>
+            <!-- tech-lead(720,340) → infra(720,455); mid (720, 398) -->
+            <g class="arrow-label-group" data-arrow="tech-infra">
+              <text class="arrow-label" x="720" y="402" text-anchor="middle">owns</text>
+            </g>
+            <!-- tech-lead(820,340) → ai(1140,455); mid (980, 398) -->
+            <g class="arrow-label-group" data-arrow="tech-ai">
+              <text class="arrow-label" x="980" y="402" text-anchor="middle">leads</text>
+            </g>
+            <!-- plat(300,575) → airline(300,695); mid (300, 635) -->
+            <g class="arrow-label-group" data-arrow="plat-air">
+              <text class="arrow-label" x="300" y="639" text-anchor="middle">deployed to</text>
+            </g>
+            <!-- infra(620,575) → airline(400,695); mid (510, 635) -->
+            <g class="arrow-label-group" data-arrow="infra-air">
+              <text class="arrow-label" x="510" y="639" text-anchor="middle">underlies</text>
+            </g>
+            <!-- ai(1080,575) → dashnote(880,695); mid (980, 635) -->
+            <g class="arrow-label-group" data-arrow="ai-dash">
+              <text class="arrow-label" x="980" y="639" text-anchor="middle">powers</text>
+            </g>
+            <!-- plat(380,575) → pfa(1080,695); mid (730, 635) -->
+            <g class="arrow-label-group" data-arrow="plat-pfa">
+              <text class="arrow-label" x="730" y="631" text-anchor="middle">supports</text>
+            </g>
+            <!-- ai(1140,575) → comm-out(1140,935); raw mid (1140,755) is
+                 INSIDE pfa-app — use 1/4 point (1140, 665) instead. -->
+            <g class="arrow-label-group" data-arrow="ai-comm">
+              <text class="arrow-label" x="1140" y="665" text-anchor="middle">drives</text>
+            </g>
+            <!-- comm-out(1260,985) → mentees(1260,70) via right-side curve;
+                 cubic-Bezier t=0.5 lands at (1372, 528). -->
+            <g class="arrow-label-group" data-arrow="comm-ment">
+              <text class="arrow-label" x="1372" y="532" text-anchor="middle">grows</text>
+            </g>
+            <!-- speaking(180,985) → community(620,70). Midpoint (122,528)
+                 crowds the namespace-engineering label area. Use t=0.25,
+                 which lands near the lower-left of the sweep at (102,842). -->
+            <g class="arrow-label-group" data-arrow="speak-comm">
+              <text class="arrow-label" x="102" y="845" text-anchor="middle">broadcasts</text>
+            </g>
+          </g>
+
+          <!-- ===================================================
+               LAYER 8 — Footer text inside boundary
+               =================================================== -->
+          <g>
+            <text class="namespace-label prov-fade" data-prov="footer-1" x="80" y="1108">
+              <tspan class="key">$</tspan> kubectl get all — last reconcile: <tspan fill="var(--text)">just now</tspan>
+            </text>
+            <text class="namespace-label prov-fade" data-prov="footer-2" x="80" y="1128" font-size="11">
+              <tspan class="key">▸</tspan> <tspan fill="var(--text-muted)">hover any node to inspect — hover any line to see its role</tspan>
+            </text>
+          </g>
+
+        </svg>
+       </div>
+      </div><!-- /.diagram-desktop -->
+
+      <div class="diagram-mobile">
+        <svg class="diagram diagram-m" viewBox="0 0 400 1130" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Architecture diagram (mobile)">
+
+          <defs>
+            <marker id="arrowhead-m" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse" markerUnits="userSpaceOnUse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="context-stroke" />
+            </marker>
+          </defs>
+
+          <!-- Layer 1: boundary (380 wide, 1020 tall — vertical stack so each
+               node has room to breathe instead of being crammed three-across) -->
+          <rect class="boundary prov-draw" data-prov="boundary" x="10" y="62" width="380" height="1020" rx="6" />
+          <text class="boundary-label prov-fade" data-prov="boundary-label" x="18" y="78" font-size="9">
+            <tspan class="punct">// </tspan>system <tspan class="punct">·</tspan> ap-southeast-1
+          </text>
+
+          <!-- Layer 2: namespaces — each one is now a tall column that
+               stacks its nodes vertically. -->
+          <g class="layer-namespaces">
+            <rect class="namespace prov-draw" data-prov="ns-leadership"  x="18" y="84"  width="364" height="116" rx="5"/>
+            <text class="namespace-label prov-fade" data-prov="ns-leadership-label" x="26" y="98" font-size="8.5"><tspan class="key">ns:</tspan> leadership</text>
+
+            <rect class="namespace prov-draw" data-prov="ns-engineering" x="18" y="210" width="364" height="312" rx="5"/>
+            <text class="namespace-label prov-fade" data-prov="ns-engineering-label" x="26" y="224" font-size="8.5"><tspan class="key">ns:</tspan> engineering</text>
+
+            <rect class="namespace prov-draw" data-prov="ns-products"    x="18" y="540" width="364" height="312" rx="5"/>
+            <text class="namespace-label prov-fade" data-prov="ns-products-label" x="26" y="554" font-size="8.5"><tspan class="key">ns:</tspan> products</text>
+
+            <rect class="namespace prov-draw" data-prov="ns-obs"         x="18" y="870" width="364" height="200" rx="5"/>
+            <text class="namespace-label prov-fade" data-prov="ns-obs-label" x="26" y="884" font-size="8.5"><tspan class="key">ns:</tspan> observability</text>
+          </g>
+
+          <!-- Layer 3: arrows. Adjacent vertical hops are straight lines.
+               Skipping connections curve through the side gutters (left or
+               right of the node stack) so they never cross a node. -->
+          <g class="layer-arrows">
+            <!-- clients (actor) → tech-lead — short diagonal -->
+            <g class="arr" data-arrow="clients-tech">
+              <path id="arr-m-clients-tech" class="arrow-path prov-arrow" data-prov="arr-clients-tech" d="M 70 48 L 140 110" marker-end="url(#arrowhead-m)" />
+              <path class="arrow-hit" data-arrow="clients-tech" d="M 70 48 L 140 110" />
+            </g>
+            <!-- community (actor) → tech-lead -->
+            <g class="arr" data-arrow="comm-tech">
+              <path id="arr-m-comm-tech" class="arrow-path prov-arrow" data-prov="arr-comm-tech" d="M 200 48 L 200 110" marker-end="url(#arrowhead-m)" />
+              <path class="arrow-hit" data-arrow="comm-tech" d="M 200 48 L 200 110" />
+            </g>
+            <!-- tech-lead → platform-eng — straight down -->
+            <g class="arr" data-arrow="tech-plat">
+              <path id="arr-m-tech-plat" class="arrow-path prov-arrow" data-prov="arr-tech-plat" d="M 200 182 L 200 240" marker-end="url(#arrowhead-m)" />
+              <path class="arrow-hit" data-arrow="tech-plat" d="M 200 182 L 200 240" />
+            </g>
+            <!-- tech-lead → infra-eng — right-side curve around platform-eng -->
+            <g class="arr" data-arrow="tech-infra">
+              <path id="arr-m-tech-infra" class="arrow-path prov-arrow" data-prov="arr-tech-infra" d="M 350 182 C 396 230, 396 290, 350 326" marker-end="url(#arrowhead-m)" />
+              <path class="arrow-hit" data-arrow="tech-infra" d="M 350 182 C 396 230, 396 290, 350 326" />
+            </g>
+            <!-- tech-lead → ai-tooling — right-side curve, wider arc, around
+                 both platform-eng and infra-eng -->
+            <g class="arr" data-arrow="tech-ai">
+              <path id="arr-m-tech-ai" class="arrow-path prov-arrow" data-prov="arr-tech-ai" d="M 365 182 C 414 240, 414 380, 365 412" marker-end="url(#arrowhead-m)" />
+              <path class="arrow-hit" data-arrow="tech-ai" d="M 365 182 C 414 240, 414 380, 365 412" />
+            </g>
+            <!-- platform-eng → airline — left-side curve around infra-eng + ai-tooling -->
+            <g class="arr" data-arrow="plat-air">
+              <path id="arr-m-plat-air" class="arrow-path prov-arrow" data-prov="arr-plat-air" d="M 50 312 C 4 390, 4 510, 50 570" marker-end="url(#arrowhead-m)" />
+              <path class="arrow-hit" data-arrow="plat-air" d="M 50 312 C 4 390, 4 510, 50 570" />
+            </g>
+            <!-- infra-eng → airline — left-side curve around ai-tooling -->
+            <g class="arr" data-arrow="infra-air">
+              <path id="arr-m-infra-air" class="arrow-path prov-arrow" data-prov="arr-infra-air" d="M 70 398 C 22 440, 22 530, 70 570" marker-end="url(#arrowhead-m)" />
+              <path class="arrow-hit" data-arrow="infra-air" d="M 70 398 C 22 440, 22 530, 70 570" />
+            </g>
+            <!-- ai-tooling → dashnote — right-side curve around airline -->
+            <g class="arr" data-arrow="ai-dash">
+              <path id="arr-m-ai-dash" class="arrow-path prov-arrow" data-prov="arr-ai-dash" d="M 350 484 C 396 530, 396 620, 350 656" marker-end="url(#arrowhead-m)" />
+              <path class="arrow-hit" data-arrow="ai-dash" d="M 350 484 C 396 530, 396 620, 350 656" />
+            </g>
+            <!-- platform-eng → pfa-app — far-left long sweep around everything -->
+            <g class="arr" data-arrow="plat-pfa">
+              <path id="arr-m-plat-pfa" class="arrow-path prov-arrow" data-prov="arr-plat-pfa" d="M 30 312 C -16 460, -16 660, 30 742" marker-end="url(#arrowhead-m)" stroke-dasharray="4 3" />
+              <path class="arrow-hit" data-arrow="plat-pfa" d="M 30 312 C -16 460, -16 660, 30 742" />
+            </g>
+            <!-- ai-tooling → community-out — far-right long sweep -->
+            <g class="arr" data-arrow="ai-comm">
+              <path id="arr-m-ai-comm" class="arrow-path prov-arrow" data-prov="arr-ai-comm" d="M 370 484 C 420 620, 420 880, 370 986" marker-end="url(#arrowhead-m)" />
+              <path class="arrow-hit" data-arrow="ai-comm" d="M 370 484 C 420 620, 420 880, 370 986" />
+            </g>
+            <!-- community-out → mentees (actor) — right-side sweep all the way back to top -->
+            <g class="arr" data-arrow="comm-ment">
+              <path id="arr-m-comm-ment" class="arrow-path prov-arrow" data-prov="arr-comm-ment" d="M 376 1025 C 432 700, 432 100, 335 48" marker-end="url(#arrowhead-m)" />
+              <path class="arrow-hit" data-arrow="comm-ment" d="M 376 1025 C 432 700, 432 100, 335 48" />
+            </g>
+            <!-- speaking → community (actor) — left-side sweep all the way back to top -->
+            <g class="arr" data-arrow="speak-comm">
+              <path id="arr-m-speak-comm" class="arrow-path prov-arrow" data-prov="arr-speak-comm" d="M 24 937 C -32 700, -32 100, 170 48" marker-end="url(#arrowhead-m)" stroke-dasharray="4 3" />
+              <path class="arrow-hit" data-arrow="speak-comm" d="M 24 937 C -32 700, -32 100, 170 48" />
+            </g>
+          </g>
+
+          <!-- Layer 4: pulses -->
+          <g class="layer-pulses">
+            <circle class="pulse-dot-svg" data-pulse-arrow="clients-tech" r="2"><animateMotion dur="3.4s" repeatCount="indefinite" begin="0s"><mpath href="#arr-m-clients-tech"/></animateMotion></circle>
+            <circle class="pulse-dot-svg" data-pulse-arrow="comm-tech" r="2"><animateMotion dur="4.0s" repeatCount="indefinite" begin="0.4s"><mpath href="#arr-m-comm-tech"/></animateMotion></circle>
+            <circle class="pulse-dot-svg" data-pulse-arrow="tech-plat" r="2"><animateMotion dur="2.8s" repeatCount="indefinite" begin="0.2s"><mpath href="#arr-m-tech-plat"/></animateMotion></circle>
+            <circle class="pulse-dot-svg" data-pulse-arrow="tech-infra" r="2"><animateMotion dur="2.6s" repeatCount="indefinite" begin="0.6s"><mpath href="#arr-m-tech-infra"/></animateMotion></circle>
+            <circle class="pulse-dot-svg" data-pulse-arrow="tech-ai" r="2"><animateMotion dur="3.0s" repeatCount="indefinite" begin="0.3s"><mpath href="#arr-m-tech-ai"/></animateMotion></circle>
+            <circle class="pulse-dot-svg" data-pulse-arrow="plat-air" r="2"><animateMotion dur="2.6s" repeatCount="indefinite" begin="0.8s"><mpath href="#arr-m-plat-air"/></animateMotion></circle>
+            <circle class="pulse-dot-svg" data-pulse-arrow="infra-air" r="2"><animateMotion dur="3.2s" repeatCount="indefinite" begin="0.5s"><mpath href="#arr-m-infra-air"/></animateMotion></circle>
+            <circle class="pulse-dot-svg" data-pulse-arrow="ai-dash" r="2"><animateMotion dur="3.0s" repeatCount="indefinite" begin="0.9s"><mpath href="#arr-m-ai-dash"/></animateMotion></circle>
+            <circle class="pulse-dot-svg" data-pulse-arrow="plat-pfa" r="2"><animateMotion dur="5.6s" repeatCount="indefinite" begin="1.2s"><mpath href="#arr-m-plat-pfa"/></animateMotion></circle>
+            <circle class="pulse-dot-svg" data-pulse-arrow="ai-comm" r="2"><animateMotion dur="5.0s" repeatCount="indefinite"><mpath href="#arr-m-ai-comm"/></animateMotion></circle>
+            <circle class="pulse-dot-svg" data-pulse-arrow="comm-ment" r="2"><animateMotion dur="8.0s" repeatCount="indefinite"><mpath href="#arr-m-comm-ment"/></animateMotion></circle>
+            <circle class="pulse-dot-svg" data-pulse-arrow="speak-comm" r="2"><animateMotion dur="6.4s" repeatCount="indefinite" begin="0.5s"><mpath href="#arr-m-speak-comm"/></animateMotion></circle>
+          </g>
+
+          <!-- Layer 5: nodes — every node is now full-width (352px) inside its
+               namespace, stacked top to bottom. Each gets its own status badge. -->
+          <g class="layer-nodes">
+            <g class="node-group prov-fade prov-flash" data-prov="node-tech-lead" data-node="tech-lead" tabindex="0" role="button" aria-label="Tech Leadership">
+              <rect class="node-rect" x="24" y="110" width="352" height="72" rx="5"/>
+              <text class="node-id" x="34" y="128" font-size="9">tech-lead</text>
+              <text class="node-title" x="34" y="148" font-size="13">Tech Leadership</text>
+              <text class="node-sub" x="34" y="166" font-size="10">Squad of 20 · Thoughtworks · since 2020</text>
+              <g class="node-status" data-state="loading">
+                <circle class="dot-warn warn-pulse" cx="366" cy="126" r="2.8"/>
+                <circle class="dot status-pulse" cx="366" cy="126" r="2.8"/>
+                <text class="loading-txt" x="356" y="129" text-anchor="end" font-size="8">initializing</text>
+                <text class="ready-txt" x="356" y="129" text-anchor="end" font-size="8">running</text>
+              </g>
+            </g>
+
+            <g class="node-group prov-fade prov-flash" data-prov="node-platform-eng" data-node="platform-eng" tabindex="0" role="button" aria-label="Platform Engineering">
+              <rect class="node-rect" x="24" y="240" width="352" height="72" rx="5"/>
+              <text class="node-id" x="34" y="258" font-size="9">platform-eng</text>
+              <text class="node-title" x="34" y="278" font-size="13">Platform Engineering</text>
+              <text class="node-sub" x="34" y="296" font-size="10">IDP · developer experience · cloud-native</text>
+              <g class="node-status" data-state="loading">
+                <circle class="dot-warn warn-pulse" cx="366" cy="256" r="2.8"/>
+                <circle class="dot status-pulse" cx="366" cy="256" r="2.8"/>
+                <text class="loading-txt" x="356" y="259" text-anchor="end" font-size="8">deploying</text>
+                <text class="ready-txt" x="356" y="259" text-anchor="end" font-size="8">running</text>
+              </g>
+            </g>
+
+            <g class="node-group prov-fade prov-flash" data-prov="node-infra-eng" data-node="infra-eng" tabindex="0" role="button" aria-label="Infrastructure">
+              <rect class="node-rect" x="24" y="326" width="352" height="72" rx="5"/>
+              <text class="node-id" x="34" y="344" font-size="9">infra-eng</text>
+              <text class="node-title" x="34" y="364" font-size="13">Infrastructure</text>
+              <text class="node-sub" x="34" y="382" font-size="10">Kubernetes · Terraform · AWS · Azure</text>
+              <g class="node-status" data-state="loading">
+                <circle class="dot-warn warn-pulse" cx="366" cy="342" r="2.8"/>
+                <circle class="dot status-pulse" cx="366" cy="342" r="2.8"/>
+                <text class="loading-txt" x="356" y="345" text-anchor="end" font-size="8">provisioning</text>
+                <text class="ready-txt" x="356" y="345" text-anchor="end" font-size="8">running</text>
+              </g>
+            </g>
+
+            <g class="node-group prov-fade prov-flash" data-prov="node-ai-tooling" data-node="ai-tooling" tabindex="0" role="button" aria-label="AI and Automation">
+              <rect class="node-rect" x="24" y="412" width="352" height="72" rx="5"/>
+              <text class="node-id" x="34" y="430" font-size="9">ai-tooling</text>
+              <text class="node-title" x="34" y="450" font-size="13">AI &amp; Automation</text>
+              <text class="node-sub" x="34" y="468" font-size="10">Claude · OpenAI · agentic systems</text>
+              <g class="node-status" data-state="loading">
+                <circle class="dot-warn warn-pulse" cx="366" cy="428" r="2.8"/>
+                <circle class="dot status-pulse" cx="366" cy="428" r="2.8"/>
+                <text class="loading-txt" x="356" y="431" text-anchor="end" font-size="8">starting</text>
+                <text class="ready-txt" x="356" y="431" text-anchor="end" font-size="8">running</text>
+              </g>
+            </g>
+
+            <g class="node-group prov-fade prov-flash" data-prov="node-airline" data-node="airline" tabindex="0" role="button" aria-label="Airline client">
+              <rect class="node-rect" x="24" y="570" width="352" height="72" rx="5"/>
+              <text class="node-id" x="34" y="588" font-size="9">deployment/airline</text>
+              <text class="node-title" x="34" y="608" font-size="13">Airline Client</text>
+              <text class="node-sub" x="34" y="626" font-size="10">ticketing flexibility · team of 20</text>
+              <g class="node-status" data-state="loading">
+                <circle class="dot-warn warn-pulse" cx="366" cy="586" r="2.8"/>
+                <circle class="dot status-pulse" cx="366" cy="586" r="2.8"/>
+                <text class="loading-txt" x="356" y="589" text-anchor="end" font-size="8">rolling out</text>
+                <text class="ready-txt" x="356" y="589" text-anchor="end" font-size="8">active</text>
+              </g>
+            </g>
+
+            <g class="node-group prov-fade prov-flash" data-prov="node-dashnote" data-node="dashnote" tabindex="0" role="button" aria-label="Dashnote">
+              <rect class="node-rect" x="24" y="656" width="352" height="72" rx="5"/>
+              <text class="node-id" x="34" y="674" font-size="9">pod/dashnote</text>
+              <text class="node-title" x="34" y="694" font-size="13">Dashnote</text>
+              <text class="node-sub" x="34" y="712" font-size="10">React Native · Supabase · audio → notes</text>
+              <g class="node-status" data-state="loading">
+                <circle class="dot-warn warn-pulse" cx="366" cy="672" r="2.8"/>
+                <circle class="dot status-pulse" cx="366" cy="672" r="2.8"/>
+                <text class="loading-txt" x="356" y="675" text-anchor="end" font-size="8">scheduled</text>
+                <text class="ready-txt" x="356" y="675" text-anchor="end" font-size="8">building</text>
+              </g>
+            </g>
+
+            <g class="node-group prov-fade prov-flash" data-prov="node-pfa-app" data-node="pfa-app" tabindex="0" role="button" aria-label="PFA Donation App">
+              <rect class="node-rect" x="24" y="742" width="352" height="72" rx="5"/>
+              <text class="node-id" x="34" y="760" font-size="9">pod/pfa-app</text>
+              <text class="node-title" x="34" y="780" font-size="13">PFA Donation App</text>
+              <text class="node-sub" x="34" y="798" font-size="10">fundraising · nonprofit · full-stack web</text>
+              <g class="node-status" data-state="loading">
+                <circle class="dot-warn warn-pulse" cx="366" cy="758" r="2.8"/>
+                <circle class="dot status-pulse" cx="366" cy="758" r="2.8"/>
+                <text class="loading-txt" x="356" y="761" text-anchor="end" font-size="8">scheduled</text>
+                <text class="ready-txt" x="356" y="761" text-anchor="end" font-size="8">building</text>
+              </g>
+            </g>
+
+            <g class="node-group prov-fade prov-flash" data-prov="node-speaking" data-node="speaking" tabindex="0" role="button" aria-label="Talks and presence">
+              <rect class="node-rect" x="24" y="898" width="352" height="78" rx="5"/>
+              <text class="node-id" x="34" y="916" font-size="9">ingress/speaking</text>
+              <text class="node-title" x="34" y="936" font-size="13">Talks &amp; Presence</text>
+              <text class="node-sub" x="34" y="954" font-size="10">conference talk · YouTube · LinkedIn</text>
+              <text class="node-sub" x="34" y="970" font-size="10" fill="var(--text-dim)">▸ "Our adventure in building an IDP"</text>
+              <g class="node-status" data-state="loading">
+                <circle class="dot-warn warn-pulse" cx="366" cy="914" r="2.8"/>
+                <circle class="dot status-pulse" cx="366" cy="914" r="2.8"/>
+                <text class="loading-txt" x="356" y="917" text-anchor="end" font-size="8">pending</text>
+                <text class="ready-txt" x="356" y="917" text-anchor="end" font-size="8">available</text>
+              </g>
+            </g>
+
+            <g class="node-group prov-fade prov-flash" data-prov="node-community-out" data-node="community-out" tabindex="0" role="button" aria-label="Community and mentoring">
+              <rect class="node-rect" x="24" y="986" width="352" height="78" rx="5"/>
+              <text class="node-id" x="34" y="1004" font-size="9">service/community-out</text>
+              <text class="node-title" x="34" y="1024" font-size="13">Community &amp; Mentoring</text>
+              <text class="node-sub" x="34" y="1042" font-size="10">platform-eng lead · ai lead · mentor</text>
+              <text class="node-sub" x="34" y="1058" font-size="10" fill="var(--text-dim)">▸ engineer growth · knowledge transfer</text>
+              <g class="node-status" data-state="loading">
+                <circle class="dot-warn warn-pulse" cx="366" cy="1002" r="2.8"/>
+                <circle class="dot status-pulse" cx="366" cy="1002" r="2.8"/>
+                <text class="loading-txt" x="356" y="1005" text-anchor="end" font-size="8">spinning up</text>
+                <text class="ready-txt" x="356" y="1005" text-anchor="end" font-size="8">running</text>
+              </g>
+            </g>
+          </g>
+
+          <!-- Layer 6: external actors (above boundary, 3 mini cards) -->
+          <g class="layer-actors">
+            <g class="external prov-fade" data-prov="actor-clients">
+              <rect class="actor-box" x="14" y="8" width="112" height="40" rx="4"/>
+              <text class="actor-id" x="22" y="22" font-size="7.5">{ external }</text>
+              <text class="actor-title" x="22" y="36" font-size="10">Clients</text>
+            </g>
+            <g class="external prov-fade" data-prov="actor-community">
+              <rect class="actor-box" x="144" y="8" width="112" height="40" rx="4"/>
+              <text class="actor-id" x="152" y="22" font-size="7.5">{ external }</text>
+              <text class="actor-title" x="152" y="36" font-size="10">Community</text>
+            </g>
+            <g class="external prov-fade" data-prov="actor-mentees">
+              <rect class="actor-box" x="274" y="8" width="112" height="40" rx="4"/>
+              <text class="actor-id" x="282" y="22" font-size="7.5">{ external }</text>
+              <text class="actor-title" x="282" y="36" font-size="10">Mentees</text>
+            </g>
+          </g>
+
+          <!-- Layer 7: arrow labels — hidden on mobile via CSS, kept here only
+               so the markup mirrors the desktop diagram. -->
+          <g class="layer-arrow-labels" aria-hidden="true">
+            <g class="arrow-label-group" data-arrow="clients-tech"><text class="arrow-label" x="105" y="82" font-size="9" text-anchor="middle">engage</text></g>
+            <g class="arrow-label-group" data-arrow="comm-tech"><text class="arrow-label" x="200" y="82" font-size="9" text-anchor="middle">audience</text></g>
+            <g class="arrow-label-group" data-arrow="tech-plat"><text class="arrow-label" x="210" y="216" font-size="9" text-anchor="start">directs</text></g>
+            <g class="arrow-label-group" data-arrow="tech-infra"><text class="arrow-label" x="396" y="256" font-size="9" text-anchor="end">owns</text></g>
+            <g class="arrow-label-group" data-arrow="tech-ai"><text class="arrow-label" x="414" y="300" font-size="9" text-anchor="end">leads</text></g>
+            <g class="arrow-label-group" data-arrow="plat-air"><text class="arrow-label" x="6" y="440" font-size="9" text-anchor="start">deploys</text></g>
+            <g class="arrow-label-group" data-arrow="infra-air"><text class="arrow-label" x="24" y="490" font-size="9" text-anchor="start">underlies</text></g>
+            <g class="arrow-label-group" data-arrow="ai-dash"><text class="arrow-label" x="394" y="595" font-size="9" text-anchor="end">powers</text></g>
+            <g class="arrow-label-group" data-arrow="plat-pfa"><text class="arrow-label" x="-18" y="550" font-size="9" text-anchor="start">supports</text></g>
+            <g class="arrow-label-group" data-arrow="ai-comm"><text class="arrow-label" x="424" y="740" font-size="9" text-anchor="end">drives</text></g>
+            <g class="arrow-label-group" data-arrow="comm-ment"><text class="arrow-label" x="436" y="540" font-size="9" text-anchor="end">grows</text></g>
+            <g class="arrow-label-group" data-arrow="speak-comm"><text class="arrow-label" x="-32" y="540" font-size="9" text-anchor="start">broadcasts</text></g>
+          </g>
+
+          <!-- Layer 8: footer -->
+          <g>
+            <text class="namespace-label prov-fade" data-prov="footer-1" x="20" y="1098" font-size="8.5">
+              <tspan class="key">$</tspan> kubectl get all — <tspan fill="var(--text)">just now</tspan>
+            </text>
+            <text class="namespace-label prov-fade" data-prov="footer-2" x="20" y="1116" font-size="8">
+              <tspan class="key">▸</tspan> <tspan fill="var(--text-muted)">tap any node to inspect</tspan>
+            </text>
+          </g>
+        </svg>
+      </div><!-- /.diagram-mobile -->
+
+        <!-- Floating detail card -->
+        <div class="detail-card" id="detailCard" role="dialog" aria-modal="false" aria-label="Node detail">
+          <div class="term-chrome">
+            <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+            <span class="term-title" id="termTitle">~/system — describe</span>
+            <button class="close" id="cardClose" aria-label="Close detail">×</button>
+          </div>
+          <pre id="termBody"></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== ABOUT ============== -->
+  <section class="about" id="about" data-screen-label="03 About">
+    <div class="section-label">
+      <span class="num">03</span>
+      <span>about · cat ./README.md</span>
+      <span class="line"></span>
+    </div>
+    <h2><span class="key">$</span> whoami</h2>
+    <p>
+      I build the platforms that let other engineers ship faster. <span class="accent">Lead Consultant at Thoughtworks</span>, embedded with an airline client running a squad of 20 — improving ticketing flexibility and operational efficiency. The day job is delivery, leadership, and the unglamorous plumbing that makes both possible: Kubernetes, Terraform, CI/CD, security posture, the IDP underneath it all.
+    </p>
+    <p>
+      German-Filipino, raised in the US through 2003, now based in <span class="accent">Chiang Mai</span>. Twelve years in tech across three continents has shaped how I run platforms — pragmatically, with patience for the long tail of edge cases and a bias toward systems other people can operate without me in the room.
+    </p>
+    <p class="muted">
+      Outside of client work: community lead for Thoughtworks' Platform Engineering and AI groups, conference speaker, active mentor, and the kind of person who builds a meeting-notes app on the side because the existing ones still don't get it right.
+    </p>
+  </section>
+
+  <!-- ============== CONTACT ============== -->
+  <section class="contact" id="contact" data-screen-label="04 Contact">
+    <div class="section-label">
+      <span class="num">04</span>
+      <span>contact · ingress.yaml</span>
+      <span class="line"></span>
+    </div>
+    <h2 style="font-family:var(--mono);font-size:14px;color:var(--text-muted);font-weight:500;margin:0 0 4px 0;">
+      <span style="color:var(--text-dim)">$</span> kubectl get ingress/contact
+    </h2>
+    <p style="font-family:var(--sans);color:var(--text-muted);max-width:560px;margin:18px 0 0;">
+      Open to platform engineering and tech leadership roles — full-time or contract. Mentorship slots available on CodeMentor.
+    </p>
+    <div class="contact-grid">
+      <a class="contact-card" href="/cdn-cgi/l/email-protection#9cf4f9f0f0f3dcf1f0f3f2fbf9eef5fff4b2f8f9ea">
+        <div class="label">email · primary</div>
+        <div class="value"><span class="__cf_email__" data-cfemail="bcd4d9d0d0d3fcd1d0d3d2dbd9ced5dfd492d8d9ca">[email&#160;protected]</span></div>
+      </a>
+      <a class="contact-card" href="https://www.linkedin.com/in/mlongerich" target="_blank" rel="noopener">
+        <div class="label">linkedin</div>
+        <div class="value">/in/mlongerich</div>
+      </a>
+      <a class="contact-card" href="https://github.com/mlongerich" target="_blank" rel="noopener">
+        <div class="label">github</div>
+        <div class="value">@mlongerich</div>
+      </a>
+      <a class="contact-card" href="https://www.thoughtworks.com/en-th/careers/meet-our-people/michael-longerich" target="_blank" rel="noopener">
+        <div class="label">thoughtworks profile</div>
+        <div class="value">meet-our-people →</div>
+      </a>
+    </div>
+
+    <footer class="site">
+      <span>© 2026 michael longerich · built as a system</span>
+      <span><span id="footerDot" style="color:var(--warn);transition:color 220ms ease;" class="warn-pulse">●</span> <span id="footerStatus">verifying systems</span></span>
+    </footer>
+  </section>
+
+</main>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  // ===== Theme handling =====
+  (function initTheme() {
+    const saved = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const theme = saved || (prefersDark ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', theme);
+  })();
+  document.getElementById('themeToggle').addEventListener('click', () => {
+    const cur = document.documentElement.getAttribute('data-theme');
+    const next = cur === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('theme', next);
+  });
+
+  // ===== Header scroll state =====
+  const header = document.getElementById('siteHeader');
+  window.addEventListener('scroll', () => {
+    header.classList.toggle('scrolled', window.scrollY > 8);
+  }, { passive: true });
+
+  // ===== Set dash lengths for stroke-draw transitions =====
+  // Always use getTotalLength() so the dasharray exactly matches the path.
+  // Hardcoded data-len values truncated the visible stroke on some curves,
+  // making arrows appear disconnected from their endpoints.
+  document.querySelectorAll('.prov-draw, .prov-arrow').forEach(el => {
+    let len = 800;
+    try { if (el.getTotalLength) len = el.getTotalLength(); } catch (e) {}
+    el.style.setProperty('--len', Math.ceil(len));
+  });
+
+  // ===== PHASE 1 — PER-ELEMENT SCROLL-TRIGGERED REVEAL =====
+  // Each node fires individually. Trigger: the element's bbox bottom
+  // clears the bottom of the viewport (so the node is fully visible).
+  // Big containers (boundary, namespaces) use a "top enters viewport"
+  // trigger because their bbox is taller than the screen.
+  //
+  // Order is strictly top-down, left-to-right via REVEAL_ORDER. A FIFO
+  // queue + stagger ensures even a fast scroll cascades node-by-node
+  // instead of popping the entire diagram at once.
+  //
+  // Once revealed, an element NEVER un-reveals on scroll-back.
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const REVEAL_ORDER = [
+    'boundary',
+    'boundary-label',
+    'actor-clients',
+    'actor-community',
+    'actor-mentees',
+    'ns-leadership',
+    'ns-leadership-label',
+    'node-tech-lead',
+    'ns-engineering',
+    'ns-engineering-label',
+    'node-platform-eng',
+    'node-infra-eng',
+    'node-ai-tooling',
+    'ns-products',
+    'ns-products-label',
+    'node-airline',
+    'node-dashnote',
+    'node-pfa-app',
+    'ns-obs',
+    'ns-obs-label',
+    'node-speaking',
+    'node-community-out',
+    'footer-1',
+    'footer-2',
+  ];
+
+  // Tall containers can't use "bottom clears viewport" — they're bigger
+  // than the screen. Trigger them when their top enters the viewport.
+  const LARGE_KEYS = new Set([
+    'boundary', 'ns-leadership', 'ns-engineering', 'ns-products', 'ns-obs',
+  ]);
+
+  // Arrow → [endpoint1, endpoint2]. Both must be revealed before the
+  // arrow draws and becomes interactive. Phase 2 fix.
+  const ARROW_ENDPOINTS = {
+    'clients-tech': ['actor-clients',      'node-tech-lead'],
+    'comm-tech':    ['actor-community',    'node-tech-lead'],
+    'tech-plat':    ['node-tech-lead',     'node-platform-eng'],
+    'tech-infra':   ['node-tech-lead',     'node-infra-eng'],
+    'tech-ai':      ['node-tech-lead',     'node-ai-tooling'],
+    'plat-air':     ['node-platform-eng',  'node-airline'],
+    'infra-air':    ['node-infra-eng',     'node-airline'],
+    'ai-dash':      ['node-ai-tooling',    'node-dashnote'],
+    'plat-pfa':     ['node-platform-eng',  'node-pfa-app'],
+    'ai-comm':      ['node-ai-tooling',    'node-community-out'],
+    'comm-ment':    ['node-community-out', 'actor-mentees'],
+    'speak-comm':   ['node-speaking',      'actor-community'],
+  };
+
+  const TOTAL = REVEAL_ORDER.length + Object.keys(ARROW_ENDPOINTS).length;
+  const REVEAL_STAGGER = 110; // ms between consecutive reveals
+
+  const revealed = new Set();
+  const revealedArrows = new Set();
+  const pending = [];
+  const pendingSet = new Set();
+  let draining = false;
+
+  // querySelector returns the FIRST match. Both the desktop and the mobile
+  // diagram share data-prov keys, so we use it ONLY for the visibility probe
+  // (we pick whichever copy is actually rendered) and then use querySelectorAll
+  // to apply the .in class to BOTH copies — otherwise mobile elements would
+  // stay at opacity 0 because the desktop copy comes first in DOM.
+  const elementsFor = (key) => Array.from(document.querySelectorAll(`[data-prov="${key}"]`));
+  function visibleElementFor(key) {
+    const all = elementsFor(key);
+    // Prefer the one with a non-zero bounding box (i.e. actually rendered).
+    return all.find(el => {
+      const r = el.getBoundingClientRect();
+      return r.width > 0 || r.height > 0;
+    }) || all[0];
+  }
+  const progLabel  = document.getElementById('progLabel');
+
+  function shouldReveal(key) {
+    const el = visibleElementFor(key);
+    if (!el) return false;
+    const r = el.getBoundingClientRect();
+    const vh = window.innerHeight;
+    if (LARGE_KEYS.has(key)) {
+      // Big containers — fire as soon as the top edge is well inside view.
+      return r.top <= vh - 100;
+    }
+    // Nodes & labels — fire when the bottom edge clears the screen bottom.
+    return r.bottom <= vh - 10;
+  }
+
+  function updateProgress() {
+    const active = revealed.size + revealedArrows.size;
+    const pct = Math.round((active / TOTAL) * 100);
+    if (progLabel) {
+      progLabel.textContent =
+        `apply ${pct.toString().padStart(2, '0')}% · ${active}/${TOTAL} resources`;
+    }
+  }
+
+  function revealKey(key) {
+    if (revealed.has(key)) return;
+    revealed.add(key);
+    // Apply .in to BOTH desktop and mobile copies of this element.
+    const els = elementsFor(key);
+    els.forEach(el => {
+      el.classList.add('in');
+      // If this revealed element is a node, flip its status from
+      // "loading" (yellow dot + loading text) to "ready" (green dot +
+      // final text) after 1 second — mimics a real terraform/k8s rollout.
+      if (key.startsWith('node-')) {
+        const status = el.querySelector('.node-status');
+        if (status) {
+          // Each node "settles" after a random 1–3s, mimicking real rollouts.
+          const delay = 1000 + Math.random() * 2000;
+          setTimeout(() => { status.setAttribute('data-state', 'ready'); }, delay);
+        }
+      }
+    });
+    // Cascade arrow check — any arrow whose endpoints are both revealed.
+    // Each revealed arrow also activates its associated data-flow pulse,
+    // so pulses start running as soon as a pair is connected.
+    Object.entries(ARROW_ENDPOINTS).forEach(([arrow, [a, b]]) => {
+      if (revealedArrows.has(arrow)) return;
+      if (revealed.has(a) && revealed.has(b)) {
+        revealedArrows.add(arrow);
+        document.querySelectorAll(`.arr[data-arrow="${arrow}"]`).forEach(g => g.classList.add('in'));
+        document.querySelectorAll(`.arrow-path[data-prov="arr-${arrow}"]`).forEach(p => p.classList.add('in'));
+        document.querySelectorAll(`[data-pulse-arrow="${arrow}"]`).forEach(p => p.classList.add('live'));
+      }
+    });
+    updateProgress();
+  }
+
+  function drain() {
+    if (draining) return;
+    draining = true;
+    (function step() {
+      const next = pending.shift();
+      if (!next) { draining = false; return; }
+      pendingSet.delete(next);
+      revealKey(next);
+      setTimeout(step, REVEAL_STAGGER);
+    })();
+  }
+
+  function enqueueEligible() {
+    // Walk REVEAL_ORDER. Enqueue any eligible items not yet handled.
+    // STOP at the first item that isn't eligible — keeps reveal order
+    // strict even when many items become eligible simultaneously.
+    for (const key of REVEAL_ORDER) {
+      if (revealed.has(key) || pendingSet.has(key)) continue;
+      if (shouldReveal(key)) {
+        pending.push(key);
+        pendingSet.add(key);
+      } else {
+        break;
+      }
+    }
+    drain();
+  }
+
+  if (reduceMotion) {
+    REVEAL_ORDER.forEach(revealKey);
+  } else {
+    let rafQueued = false;
+    function onScroll() {
+      if (rafQueued) return;
+      rafQueued = true;
+      requestAnimationFrame(() => {
+        rafQueued = false;
+        enqueueEligible();
+      });
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
+    onScroll();
+  }
+
+  // ===== Hero + footer status "boot" sequence =====
+  // The pulse dot next to "mlongerich // system" and the hero meta
+  // "status:" share ONE random delay (1–3s), so they flip from yellow
+  // to green in unison — reinforcing that they describe the same thing.
+  // The footer "verifying systems" badge gets its own independent delay.
+  (function bootStatuses () {
+    const LOADING_WORDS = ['initializing', 'deploying', 'provisioning', 'starting', 'rolling out', 'spinning up'];
+    const heroDot    = document.getElementById('heroDot');
+    const heroStatus = document.getElementById('heroStatus');
+    const footerDot    = document.getElementById('footerDot');
+    const footerStatus = document.getElementById('footerStatus');
+
+    // Hero: pick one loading word per page load, show it in yellow.
+    if (heroStatus) {
+      heroStatus.textContent = LOADING_WORDS[Math.floor(Math.random() * LOADING_WORDS.length)];
+    }
+
+    const heroDelay = 1000 + Math.random() * 2000;
+    setTimeout(() => {
+      if (heroDot) heroDot.classList.remove('loading');
+      if (heroStatus) {
+        heroStatus.classList.remove('loading');
+        heroStatus.textContent = 'running';
+      }
+    }, heroDelay);
+
+    // Footer "verifying systems → all systems running" — gated on the
+    // footer being scrolled into view. Otherwise the user never sees the
+    // transition because it fires while the footer is still off-screen.
+    if (footerDot && footerStatus) {
+      let footerSettled = false;
+      const settleFooter = () => {
+        if (footerSettled) return;
+        footerSettled = true;
+        const delay = 1000 + Math.random() * 2000;
+        setTimeout(() => {
+          // Swap the warn-pulse (yellow flicker) for status-pulse (green
+          // breathing) so the final state keeps a heartbeat.
+          footerDot.classList.remove('warn-pulse');
+          footerDot.classList.add('status-pulse');
+          footerDot.style.color = 'var(--pulse)';
+          footerStatus.textContent = 'all systems running';
+        }, delay);
+      };
+      if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver((entries) => {
+          for (const e of entries) {
+            if (e.isIntersecting) { settleFooter(); io.disconnect(); break; }
+          }
+        }, { threshold: 0.5 });
+        io.observe(footerStatus);
+      } else {
+        // Fallback: poll on scroll.
+        const onScrollCheck = () => {
+          const r = footerStatus.getBoundingClientRect();
+          if (r.top < window.innerHeight && r.bottom > 0) {
+            settleFooter();
+            window.removeEventListener('scroll', onScrollCheck);
+          }
+        };
+        window.addEventListener('scroll', onScrollCheck, { passive: true });
+        onScrollCheck();
+      }
+    }
+  })();
+
+  // ===== ARROW HOVER STATE — brighten path + reveal label =====
+  // Only fires when the arrow group has been provisioned (.in).
+  function setArrowState(id, on) {
+    document.querySelectorAll(`[data-arrow="${id}"]`).forEach(g => {
+      g.classList.toggle('active', on);
+    });
+  }
+  document.querySelectorAll('.arr[data-arrow]').forEach(el => {
+    const id = el.getAttribute('data-arrow');
+    el.addEventListener('mouseenter', () => {
+      if (!el.classList.contains('in')) return;
+      setArrowState(id, true);
+    });
+    el.addEventListener('mouseleave', () => setArrowState(id, false));
+  });
+
+  // ===== NODE DETAIL CARDS =====
+  const NODE_DATA = {
+    "tech-lead": {
+      title: "describe deployment/tech-lead",
+      lines: [
+        ["prompt", "$ kubectl describe deployment/tech-lead"],
+        ["blank"],
+        ["kv", "Name", "Tech Lead"],
+        ["kv", "Role", "Lead Consultant, Thoughtworks"],
+        ["kv", "Client", "Airline (current)"],
+        ["kv", "Since", "2020"],
+        ["kv", "Focus", "Squad leadership · delivery · strategy"],
+        ["kv", "Squad", "Team of 20"],
+        ["kv", "Status", "Running", "running"],
+      ]
+    },
+    "platform-eng": {
+      title: "describe service/platform-eng",
+      lines: [
+        ["prompt", "$ kubectl describe service/platform-eng"],
+        ["blank"],
+        ["kv", "Name", "Platform Engineering"],
+        ["kv", "Type", "Core Service"],
+        ["kv", "Outputs", "Internal Developer Platform"],
+        ["raw", "             Developer experience tooling"],
+        ["raw", "             Cloud-native architecture"],
+        ["kv", "Talk", "\"Our adventure in building an"],
+        ["raw", "             internal developer platform\""],
+        ["raw", "             — conference, 2024"],
+        ["kv", "Status", "Running", "running"],
+      ]
+    },
+    "infra-eng": {
+      title: "describe service/infra-eng",
+      lines: [
+        ["prompt", "$ kubectl describe service/infra-eng"],
+        ["blank"],
+        ["kv", "Name", "Infrastructure Engineering"],
+        ["kv", "Tools", "Kubernetes · Terraform · Helm"],
+        ["kv", "Cloud", "AWS · Azure"],
+        ["kv", "Domains", "CI/CD · Security · IaC"],
+        ["kv", "Pattern", "Legacy modernisation → greenfield"],
+        ["kv", "Status", "Running", "running"],
+      ]
+    },
+    "ai-tooling": {
+      title: "describe service/ai-tooling",
+      lines: [
+        ["prompt", "$ kubectl describe service/ai-tooling"],
+        ["blank"],
+        ["kv", "Name", "AI & Automation"],
+        ["kv", "Role", "Community Lead — TW AI Community"],
+        ["kv", "Scope", "AI-enhanced workflows"],
+        ["raw", "             Tooling integration"],
+        ["raw", "             Claude API · OpenAI · agentic"],
+        ["kv", "Status", "Running", "running"],
+      ]
+    },
+    "airline": {
+      title: "describe deployment/airline",
+      lines: [
+        ["prompt", "$ kubectl describe deployment/airline"],
+        ["blank"],
+        ["kv", "Name", "Airline (current client)"],
+        ["kv", "Type", "Production Deployment"],
+        ["kv", "Product", "Ticketing flexibility · ops efficiency"],
+        ["kv", "Team", "20 — devs · QA · BA · PO · SM"],
+        ["kv", "Lead", "Michael Longerich (Tech Lead)"],
+        ["kv", "Status", "Active", "running"],
+      ]
+    },
+    "dashnote": {
+      title: "describe pod/dashnote",
+      lines: [
+        ["prompt", "$ kubectl describe pod/dashnote"],
+        ["blank"],
+        ["kv", "Name", "Dashnote"],
+        ["kv", "Type", "Personal Product"],
+        ["kv", "Stack", "React Native · Supabase"],
+        ["raw", "             OpenAI Whisper · Claude API"],
+        ["raw", "             iOS · Android"],
+        ["kv", "Purpose", "Audio → AI-structured meeting notes"],
+        ["kv", "Status", "In development"],
+      ]
+    },
+    "pfa-app": {
+      title: "describe pod/pfa-app",
+      lines: [
+        ["prompt", "$ kubectl describe pod/pfa-app"],
+        ["blank"],
+        ["kv", "Name", "PFA Donation App"],
+        ["kv", "Type", "Mission Project"],
+        ["kv", "Purpose", "Fundraising platform — nonprofit"],
+        ["kv", "Stack", "Full-stack web"],
+        ["kv", "Status", "In development"],
+      ]
+    },
+    "community-out": {
+      title: "describe service/community-out",
+      lines: [
+        ["prompt", "$ kubectl describe service/community-out"],
+        ["blank"],
+        ["kv", "Name", "Community & Mentoring"],
+        ["kv", "Roles", "Platform Engineering Lead"],
+        ["raw", "             AI Community Lead"],
+        ["raw", "             Mentor — active sessions"],
+        ["kv", "Output", "Engineer growth · knowledge transfer"],
+        ["kv", "Status", "Running", "running"],
+      ]
+    },
+    "speaking": {
+      title: "describe ingress/speaking",
+      lines: [
+        ["prompt", "$ kubectl describe ingress/speaking"],
+        ["blank"],
+        ["kv", "Name", "Talks & Presence"],
+        ["kv", "Talk", "\"Our adventure in building an"],
+        ["raw", "             internal developer platform\""],
+        ["raw", "             with Raksit Mantanacharu"],
+        ["kv", "Platform", "YouTube · Thoughtworks · LinkedIn"],
+        ["kv", "Status", "Available", "running"],
+      ]
+    },
+  };
+
+  function renderCard(id) {
+    const data = NODE_DATA[id];
+    if (!data) return;
+    document.getElementById('termTitle').textContent = `~/system — ${data.title}`;
+    const body = document.getElementById('termBody');
+    let html = "";
+    data.lines.forEach(line => {
+      const kind = line[0];
+      if (kind === "blank") { html += "\n"; return; }
+      if (kind === "prompt") { html += `<span class="prompt">${escapeHtml(line[1])}</span>\n`; return; }
+      if (kind === "raw") { html += escapeHtml(line[1]) + "\n"; return; }
+      if (kind === "kv") {
+        const key = line[1].padEnd(9, " ");
+        const val = line[2];
+        const cls = line[3] || "";
+        html += `<span class="key">${escapeHtml(key)}</span>: <span class="${cls}">${escapeHtml(val)}</span>\n`;
+        return;
+      }
+    });
+    body.innerHTML = html;
+  }
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+  }
+
+  const card = document.getElementById('detailCard');
+  const closeBtn = document.getElementById('cardClose');
+  let pinnedNode = null;
+  let activeNode = null;
+
+  function positionCard(nodeEl) {
+    const rect = nodeEl.getBoundingClientRect();
+    const cardW = card.offsetWidth || 360;
+    const cardH = card.offsetHeight || 240;
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const gap = 12;
+    let left = rect.right + gap;
+    if (left + cardW > vw - 12) {
+      left = rect.left - gap - cardW;
+      if (left < 12) {
+        left = Math.max(12, Math.min(vw - cardW - 12, rect.left + rect.width/2 - cardW/2));
+      }
+    }
+    let top = rect.top;
+    if (top + cardH > vh - 12) top = Math.max(12, vh - cardH - 12);
+    if (top < 80) top = 80;
+    card.style.left = left + 'px';
+    card.style.top  = top + 'px';
+  }
+  function showCard(nodeEl) {
+    const id = nodeEl.getAttribute('data-node');
+    renderCard(id);
+    card.classList.add('visible');
+    requestAnimationFrame(() => positionCard(nodeEl));
+    activeNode = nodeEl;
+    document.querySelectorAll('.node-group.active').forEach(n => { if (n !== nodeEl) n.classList.remove('active'); });
+    nodeEl.classList.add('active');
+  }
+  function hideCard() {
+    if (pinnedNode) return;
+    card.classList.remove('visible');
+    if (activeNode) activeNode.classList.remove('active');
+    activeNode = null;
+  }
+
+  document.querySelectorAll('.node-group[data-node]').forEach(node => {
+    node.addEventListener('mouseenter', () => {
+      if (pinnedNode && pinnedNode !== node) return;
+      showCard(node);
+    });
+    node.addEventListener('mouseleave', () => {
+      if (pinnedNode) return;
+      hideCard();
+    });
+    node.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (pinnedNode === node) { pinnedNode = null; hideCard(); }
+      else { pinnedNode = node; showCard(node); }
+    });
+    node.addEventListener('focus', () => showCard(node));
+    node.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); node.click(); }
+      if (e.key === 'Escape') { pinnedNode = null; hideCard(); node.blur(); }
+    });
+  });
+
+  closeBtn.addEventListener('click', () => { pinnedNode = null; hideCard(); });
+  document.addEventListener('click', (e) => {
+    if (!card.contains(e.target) && !e.target.closest('.node-group')) {
+      pinnedNode = null; hideCard();
+    }
+  });
+  window.addEventListener('scroll', () => { if (activeNode) positionCard(activeNode); }, { passive: true });
+  window.addEventListener('resize', () => { if (activeNode) positionCard(activeNode); });
+</script>
+</body>
+</html>

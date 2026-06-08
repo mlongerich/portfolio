@@ -14,9 +14,15 @@ export const REVEAL_ORDER = [
   'node-airline',
   'node-dashnote',
   'node-donation-app',
+  'node-pfa',
+  'ns-clients',
+  'ns-clients-label',
+  'node-telecom',
+  'node-prem-school',
   'ns-obs',
   'ns-obs-label',
   'node-speaking',
+  'node-codingame',
   'node-community-out',
   'footer-1',
 ];
@@ -28,14 +34,17 @@ export const ARROW_ENDPOINTS = {
   'plat-air': ['node-platform-eng', 'node-airline'],
   'infra-air': ['node-infra-eng', 'node-airline'],
   'ai-dash': ['node-ai-tooling', 'node-dashnote'],
-  'plat-pfa': ['node-platform-eng', 'node-donation-app'],
+  'plat-pfa': ['node-platform-eng', 'node-pfa'],
+  'infra-tel': ['node-infra-eng', 'node-telecom'],
+  'plat-school': ['node-platform-eng', 'node-prem-school'],
+  'ai-code': ['node-ai-tooling', 'node-codingame'],
   'ai-comm': ['node-ai-tooling', 'node-community-out'],
   'plat-speak': ['node-platform-eng', 'node-speaking'],
   'speak-comm': ['node-speaking', 'node-community-out'],
 };
 
 export const LARGE_KEYS = new Set([
-  'boundary', 'ns-leadership', 'ns-engineering', 'ns-products', 'ns-obs',
+  'boundary', 'ns-leadership', 'ns-engineering', 'ns-products', 'ns-clients', 'ns-obs',
 ]);
 
 export const REVEAL_STAGGER = 110;
@@ -50,6 +59,10 @@ export const NODE_STATUSES = {
   'airline': { loading: 'rolling out', ready: 'active' },
   'dashnote': { loading: 'scheduled', ready: 'building' },
   'donation-app': { loading: 'scheduled', ready: 'building' },
+  'pfa': { loading: 'connecting', ready: 'running' },
+  'telecom': { loading: 'loading', ready: 'shipped' },
+  'prem-school': { loading: 'loading', ready: 'completed' },
   'speaking': { loading: 'pending', ready: 'available' },
+  'codingame': { loading: 'loading', ready: 'won · 2017' },
   'community-out': { loading: 'spinning up', ready: 'running' },
 };

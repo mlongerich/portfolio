@@ -3,6 +3,7 @@ import { useState, useRef } from 'react';
 export function useNodeCard() {
   const [activeNodeId, setActiveNodeId] = useState(null);
   const [pinnedNodeId, setPinnedNodeId] = useState(null);
+  const [activeSource, setActiveSource] = useState(null);
   const activeNodeElRef = useRef(null);
   // Ref mirrors pinnedNodeId for safe reads inside setTimeout (avoids stale closure)
   const pinnedRef = useRef(null);
@@ -30,19 +31,21 @@ export function useNodeCard() {
     }, 80);
   }
 
-  function pinCard(nodeId, nodeEl) {
+  function pinCard(nodeId, nodeEl, source = 'diagram') {
     clearTimeout(hideTimerRef.current);
     hideTimerRef.current = null;
     if (pinnedRef.current === nodeId) {
       pinnedRef.current = null;
       setPinnedNodeId(null);
       setActiveNodeId(null);
+      setActiveSource(null);
       activeNodeElRef.current = null;
     } else {
       pinnedRef.current = nodeId;
       setPinnedNodeId(nodeId);
       activeNodeElRef.current = nodeEl;
       setActiveNodeId(nodeId);
+      setActiveSource(source);
     }
   }
 
@@ -52,12 +55,14 @@ export function useNodeCard() {
     pinnedRef.current = null;
     setPinnedNodeId(null);
     setActiveNodeId(null);
+    setActiveSource(null);
     activeNodeElRef.current = null;
   }
 
   return {
     activeNodeId,
     pinnedNodeId,
+    activeSource,
     activeNodeEl: activeNodeElRef,
     handlers: { showCard, hideCard, pinCard, dismissCard },
   };

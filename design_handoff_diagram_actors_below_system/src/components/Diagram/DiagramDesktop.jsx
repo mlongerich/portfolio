@@ -98,7 +98,7 @@ export function DiagramDesktop({ revealed, revealedArrows, nodeStatuses, activeN
         <svg
           className="diagram"
           id="diagramSvg"
-          viewBox="0 0 1440 1465"
+          viewBox="0 130 1440 1270"
           xmlns="http://www.w3.org/2000/svg"
           role="img"
           aria-label="Architecture diagram of Michael Longerich's career and projects"
@@ -111,9 +111,9 @@ export function DiagramDesktop({ revealed, revealedArrows, nodeStatuses, activeN
 
           {/* Layer 1 — boundary */}
           <g className="layer-boundary">
-            <rect className={cl('boundary prov-draw', r('boundary') && 'in')} data-prov="boundary" x="60" y="160" width="1320" height="1280" rx="8" ry="8" />
+            <rect className={cl('boundary prov-draw', r('boundary') && 'in')} data-prov="boundary" x="60" y="160" width="1320" height="1120" rx="8" ry="8" />
             <text className={cl('boundary-label prov-fade', r('boundary-label') && 'in')} data-prov="boundary-label" x="80" y="184">
-              <tspan className="punct">// </tspan>system <tspan className="punct">·</tspan> michael.longerich <tspan className="punct">·</tspan> region: <tspan fill="var(--text)">ap-southeast-1</tspan>
+              <tspan className="punct">// </tspan>system <tspan className="punct">·</tspan> mlongerich <tspan className="punct">·</tspan> region: <tspan fill="var(--text)">ap-southeast-1</tspan>
             </text>
           </g>
 
@@ -127,39 +127,36 @@ export function DiagramDesktop({ revealed, revealedArrows, nodeStatuses, activeN
             <text className={cl('namespace-label prov-fade', r('ns-engineering-label') && 'in')} data-prov="ns-engineering-label" x="118" y="424">
               <tspan className="key">namespace:</tspan> engineering
             </text>
-            <rect className={cl('namespace prov-draw', r('ns-products') && 'in')} data-prov="ns-products" x="100" y="640" width="1240" height="335" rx="6" ry="6" />
+            <rect className={cl('namespace prov-draw', r('ns-products') && 'in')} data-prov="ns-products" x="100" y="640" width="1240" height="200" rx="6" ry="6" />
             <text className={cl('namespace-label prov-fade', r('ns-products-label') && 'in')} data-prov="ns-products-label" x="118" y="664">
               <tspan className="key">namespace:</tspan> products
             </text>
-            <rect className={cl('namespace prov-draw', r('ns-clients') && 'in')} data-prov="ns-clients" x="100" y="995" width="1240" height="175" rx="6" ry="6" />
-            <text className={cl('namespace-label prov-fade', r('ns-clients-label') && 'in')} data-prov="ns-clients-label" x="118" y="1019">
-              <tspan className="key">namespace:</tspan> clients <tspan className="key" dx="6">·</tspan> past engagements
-            </text>
-            <rect className={cl('namespace prov-draw', r('ns-obs') && 'in')} data-prov="ns-obs" x="100" y="1195" width="1240" height="180" rx="6" ry="6" />
-            <text className={cl('namespace-label prov-fade', r('ns-obs-label') && 'in')} data-prov="ns-obs-label" x="118" y="1219">
+            <rect className={cl('namespace prov-draw', r('ns-obs') && 'in')} data-prov="ns-obs" x="100" y="880" width="1240" height="180" rx="6" ry="6" />
+            <text className={cl('namespace-label prov-fade', r('ns-obs-label') && 'in')} data-prov="ns-obs-label" x="118" y="904">
               <tspan className="key">namespace:</tspan> observability <tspan className="key" dx="6">·</tspan> spans all layers
             </text>
           </g>
 
           {/* Layer 3 — arrows */}
           <g className="layer-arrows">
+            <Arr id="clients-tech" d="M 240 1310 C 20 1310, 20 290, 560 290" revealedArrows={revealedArrows} activeArrow={activeArrow} setActiveArrow={setActiveArrow} />
+            <Arr id="comm-tech"    d="M 760 1310 C 1420 1310, 1420 290, 880 290" revealedArrows={revealedArrows} activeArrow={activeArrow} setActiveArrow={setActiveArrow} />
             <Arr id="tech-plat"   d="M 620 340 L 300 455" revealedArrows={revealedArrows} activeArrow={activeArrow} setActiveArrow={setActiveArrow} />
             <Arr id="tech-infra"  d="M 720 340 L 720 455" revealedArrows={revealedArrows} activeArrow={activeArrow} setActiveArrow={setActiveArrow} />
             <Arr id="tech-ai"     d="M 820 340 L 1140 455" revealedArrows={revealedArrows} activeArrow={activeArrow} setActiveArrow={setActiveArrow} />
             <Arr id="plat-air"   d="M 300 575 L 300 695" revealedArrows={revealedArrows} activeArrow={activeArrow} setActiveArrow={setActiveArrow} />
             <Arr id="infra-air"  d="M 620 575 L 400 695" revealedArrows={revealedArrows} activeArrow={activeArrow} setActiveArrow={setActiveArrow} />
             <Arr id="ai-dash"    d="M 1080 575 L 880 695" revealedArrows={revealedArrows} activeArrow={activeArrow} setActiveArrow={setActiveArrow} />
-            <Arr id="plat-pfa"   d="M 280 575 L 720 855"   revealedArrows={revealedArrows} activeArrow={activeArrow} setActiveArrow={setActiveArrow} dashed />
-            <Arr id="infra-tel"  d="M 720 575 L 390 1050"  revealedArrows={revealedArrows} activeArrow={activeArrow} setActiveArrow={setActiveArrow} dashed />
-            <Arr id="plat-school" d="M 460 575 L 990 1050" revealedArrows={revealedArrows} activeArrow={activeArrow} setActiveArrow={setActiveArrow} dashed />
-            <Arr id="ai-code"    d="M 1140 575 L 710 1250" revealedArrows={revealedArrows} activeArrow={activeArrow} setActiveArrow={setActiveArrow} dashed />
-            <Arr id="ai-comm"    d="M 1140 575 L 1090 1250" revealedArrows={revealedArrows} activeArrow={activeArrow} setActiveArrow={setActiveArrow} />
-            <Arr id="plat-speak" d="M 460 515 L 330 1250"   revealedArrows={revealedArrows} activeArrow={activeArrow} setActiveArrow={setActiveArrow} />
-            <Arr id="speak-comm" d="M 520 1260 C 580 1238, 840 1238, 900 1260" revealedArrows={revealedArrows} activeArrow={activeArrow} setActiveArrow={setActiveArrow} />
+            <Arr id="plat-pfa"   d="M 380 575 L 1080 695" revealedArrows={revealedArrows} activeArrow={activeArrow} setActiveArrow={setActiveArrow} dashed />
+            <Arr id="ai-comm"    d="M 1140 575 L 1140 935" revealedArrows={revealedArrows} activeArrow={activeArrow} setActiveArrow={setActiveArrow} />
+            <Arr id="comm-ment"  d="M 1160 1035 L 1160 1310" revealedArrows={revealedArrows} activeArrow={activeArrow} setActiveArrow={setActiveArrow} />
+            <Arr id="speak-comm" d="M 410 1035 C 480 1140, 600 1220, 720 1310" revealedArrows={revealedArrows} activeArrow={activeArrow} setActiveArrow={setActiveArrow} dashed />
           </g>
 
           {/* Layer 4 — pulses */}
           <g className="layer-pulses" id="pulses">
+            <Pulse arrowId="clients-tech" dur="3.4s" begin="0s"   revealedArrows={revealedArrows} />
+            <Pulse arrowId="comm-tech"    dur="4.0s" begin="0.4s" revealedArrows={revealedArrows} />
             <Pulse arrowId="tech-plat"    dur="2.8s" begin="0.2s" revealedArrows={revealedArrows} />
             <Pulse arrowId="tech-infra"   dur="2.6s" begin="0.6s" revealedArrows={revealedArrows} />
             <Pulse arrowId="tech-ai"      dur="3.0s" begin="0.3s" revealedArrows={revealedArrows} />
@@ -167,34 +164,28 @@ export function DiagramDesktop({ revealed, revealedArrows, nodeStatuses, activeN
             <Pulse arrowId="infra-air"    dur="3.2s" begin="0.5s" revealedArrows={revealedArrows} />
             <Pulse arrowId="ai-dash"      dur="3.0s" begin="0.9s" revealedArrows={revealedArrows} />
             <Pulse arrowId="plat-pfa"     dur="5.6s" begin="1.2s" revealedArrows={revealedArrows} />
-            <Pulse arrowId="infra-tel"    dur="4.8s" begin="0.4s" revealedArrows={revealedArrows} />
-            <Pulse arrowId="plat-school"  dur="5.2s" begin="1.0s" revealedArrows={revealedArrows} />
-            <Pulse arrowId="ai-code"      dur="4.5s" begin="0.6s" revealedArrows={revealedArrows} />
             <Pulse arrowId="ai-comm"      dur="5.0s" begin="0.0s" revealedArrows={revealedArrows} />
-            <Pulse arrowId="plat-speak"   dur="4.2s" begin="1.4s" revealedArrows={revealedArrows} />
-            <Pulse arrowId="speak-comm"   dur="2.4s" begin="0.7s" revealedArrows={revealedArrows} />
+            <Pulse arrowId="comm-ment"    dur="8.0s" begin="0.0s" revealedArrows={revealedArrows} />
+            <Pulse arrowId="speak-comm"   dur="6.4s" begin="0.5s" revealedArrows={revealedArrows} />
           </g>
 
           {/* Layer 5 — nodes */}
           <g className="layer-nodes">
-
-            {/* leadership namespace */}
             <NodeGrp nodeId="tech-lead" ariaLabel="Tech Leadership node — open details" {...nodeProps}>
               <rect className="node-rect" x="560" y="260" width="320" height="80" rx="5" ry="5" />
               <text className="node-id" x="576" y="282">tech-lead</text>
               <text className="node-title" x="576" y="306">Tech Leadership</text>
-              <text className="node-sub" x="576" y="324">Thoughtworks · since 2020</text>
+              <text className="node-sub" x="576" y="324">Squad of 20 · Thoughtworks · since 2020</text>
               <NodeStatus nodeId="tech-lead" nodeStatuses={nodeStatuses} cx={860} cy={278} sx={846} sy={282} loading="initializing" ready="running" />
             </NodeGrp>
 
-            {/* engineering namespace */}
             <NodeGrp nodeId="platform-eng" ariaLabel="Platform Engineering node — open details" {...nodeProps}>
               <rect className="node-rect" x="140" y="455" width="320" height="120" rx="5" ry="5" />
               <text className="node-id" x="156" y="477">platform-eng</text>
               <text className="node-title" x="156" y="501">Platform Engineering</text>
               <text className="node-sub" x="156" y="521">Internal Developer Platforms</text>
-              <text className="node-sub" x="156" y="538">11 teams · 27 services onboarded</text>
-              <text className="node-sub" x="156" y="558" fill="var(--text-dim)">▸ talk: "Our Adventures in Building an IDP"</text>
+              <text className="node-sub" x="156" y="538">developer experience · cloud-native</text>
+              <text className="node-sub" x="156" y="558" fill="var(--text-dim)">▸ talk: "Our adventure in building…"</text>
               <NodeStatus nodeId="platform-eng" nodeStatuses={nodeStatuses} cx={440} cy={473} sx={426} sy={477} loading="deploying" ready="running" />
             </NodeGrp>
 
@@ -203,8 +194,8 @@ export function DiagramDesktop({ revealed, revealedArrows, nodeStatuses, activeN
               <text className="node-id" x="576" y="477">infra-eng</text>
               <text className="node-title" x="576" y="501">Infrastructure</text>
               <text className="node-sub" x="576" y="521">Kubernetes · Terraform · Helm</text>
-              <text className="node-sub" x="576" y="538">AWS · Azure · GoCD · CI/CD</text>
-              <text className="node-sub" x="576" y="558" fill="var(--text-dim)">▸ security · IaC · Datadog</text>
+              <text className="node-sub" x="576" y="538">AWS · Azure · CI/CD · security</text>
+              <text className="node-sub" x="576" y="558" fill="var(--text-dim)">▸ legacy modernisation → greenfield</text>
               <NodeStatus nodeId="infra-eng" nodeStatuses={nodeStatuses} cx={860} cy={473} sx={846} sy={477} loading="provisioning" ready="running" />
             </NodeGrp>
 
@@ -218,116 +209,100 @@ export function DiagramDesktop({ revealed, revealedArrows, nodeStatuses, activeN
               <NodeStatus nodeId="ai-tooling" nodeStatuses={nodeStatuses} cx={1280} cy={473} sx={1266} sy={477} loading="starting" ready="running" />
             </NodeGrp>
 
-            {/* products namespace — row 1 */}
             <NodeGrp nodeId="airline" ariaLabel="Airline client deployment — open details" {...nodeProps}>
               <rect className="node-rect" x="140" y="695" width="320" height="120" rx="5" ry="5" />
               <text className="node-id" x="156" y="717">deployment/airline</text>
               <text className="node-title" x="156" y="741">Airline Client</text>
-              <text className="node-sub" x="156" y="761">seats · devops · BFF/interop · baggage</text>
-              <text className="node-sub" x="156" y="778">team: 20 · tech lead</text>
+              <text className="node-sub" x="156" y="761">ticketing flexibility · ops</text>
+              <text className="node-sub" x="156" y="778">team: 20 — devs · QA · BA · PO · SM</text>
               <text className="node-sub" x="156" y="798" fill="var(--text-dim)">▸ production · active</text>
               <NodeStatus nodeId="airline" nodeStatuses={nodeStatuses} cx={440} cy={713} sx={426} sy={717} loading="rolling out" ready="active" />
             </NodeGrp>
 
-            <NodeGrp nodeId="dashnote" ariaLabel="AI meeting notes app project — open details" {...nodeProps}>
+            <NodeGrp nodeId="dashnote" ariaLabel="Dashnote project — open details" {...nodeProps}>
               <rect className="node-rect" x="560" y="695" width="320" height="120" rx="5" ry="5" />
-              <text className="node-id" x="576" y="717">pod/ai-meeting-notes.app</text>
-              <text className="node-title" x="576" y="741">AI Meeting Notes App</text>
+              <text className="node-id" x="576" y="717">pod/dashnote</text>
+              <text className="node-title" x="576" y="741">Dashnote</text>
               <text className="node-sub" x="576" y="761">React Native · Supabase · Whisper</text>
               <text className="node-sub" x="576" y="778">audio → AI meeting notes</text>
               <text className="node-sub" x="576" y="798" fill="var(--text-dim)">▸ solo build · in development</text>
               <NodeStatus nodeId="dashnote" nodeStatuses={nodeStatuses} cx={860} cy={713} sx={846} sy={717} loading="scheduled" ready="building" />
             </NodeGrp>
 
-            <NodeGrp nodeId="donation-app" ariaLabel="Donation App — open details" {...nodeProps}>
+            <NodeGrp nodeId="pfa-app" ariaLabel="PFA Donation App — open details" {...nodeProps}>
               <rect className="node-rect" x="980" y="695" width="320" height="120" rx="5" ry="5" />
-              <text className="node-id" x="996" y="717">pod/donation.app</text>
-              <text className="node-title" x="996" y="741">Donation App</text>
+              <text className="node-id" x="996" y="717">pod/pfa-app</text>
+              <text className="node-title" x="996" y="741">PFA Donation App</text>
               <text className="node-sub" x="996" y="761">fundraising · mission project</text>
               <text className="node-sub" x="996" y="778">full-stack web</text>
               <text className="node-sub" x="996" y="798" fill="var(--text-dim)">▸ nonprofit · in development</text>
-              <NodeStatus nodeId="donation-app" nodeStatuses={nodeStatuses} cx={1280} cy={713} sx={1266} sy={717} loading="scheduled" ready="building" />
-            </NodeGrp>
-
-            {/* products namespace — row 2 */}
-            <NodeGrp nodeId="pfa" ariaLabel="Projects For Asia — open details" {...nodeProps}>
-              <rect className="node-rect" x="440" y="855" width="560" height="100" rx="5" ry="5" />
-              <text className="node-id" x="456" y="877">service/pfa</text>
-              <text className="node-title" x="456" y="901">Projects For Asia</text>
-              <text className="node-sub" x="456" y="921">IT Director (Volunteer) · 19 years</text>
-              <text className="node-sub" x="456" y="938" fill="var(--text-dim)">▸ Ruby on Rails · active since 2007</text>
-              <NodeStatus nodeId="pfa" nodeStatuses={nodeStatuses} cx={980} cy={873} sx={966} sy={877} loading="connecting" ready="running" />
-            </NodeGrp>
-
-            {/* clients namespace */}
-            <NodeGrp nodeId="telecom" ariaLabel="Broadband Coverage Tool — open details" {...nodeProps}>
-              <rect className="node-rect" x="140" y="1050" width="500" height="100" rx="5" ry="5" />
-              <text className="node-id" x="156" y="1072">pod/telecom.coverage</text>
-              <text className="node-title" x="156" y="1096">Broadband Coverage Tool</text>
-              <text className="node-sub" x="156" y="1116">Ruby on Rails · React · GraphQL</text>
-              <text className="node-sub" x="156" y="1133" fill="var(--text-dim)">▸ Black Tangent · enterprise telecom</text>
-              <NodeStatus nodeId="telecom" nodeStatuses={nodeStatuses} cx={620} cy={1068} sx={606} sy={1072} loading="loading" ready="shipped" />
-            </NodeGrp>
-
-            <NodeGrp nodeId="prem-school" ariaLabel="International School Apps — open details" {...nodeProps}>
-              <rect className="node-rect" x="700" y="1050" width="580" height="100" rx="5" ry="5" />
-              <text className="node-id" x="716" y="1072">pod/prem-school.apps</text>
-              <text className="node-title" x="716" y="1096">International School Apps</text>
-              <text className="node-sub" x="716" y="1116">4 custom apps · sole developer</text>
-              <text className="node-sub" x="716" y="1133" fill="var(--text-dim)">▸ Prem Tinsulanonda · 2013–2019</text>
-              <NodeStatus nodeId="prem-school" nodeStatuses={nodeStatuses} cx={1260} cy={1068} sx={1246} sy={1072} loading="loading" ready="completed" />
-            </NodeGrp>
-
-            {/* observability namespace */}
-            <NodeGrp nodeId="speaking" ariaLabel="Talks and presence — open details" {...nodeProps}>
-              <rect className="node-rect" x="140" y="1250" width="380" height="100" rx="5" ry="5" />
-              <text className="node-id" x="156" y="1272">ingress/speaking</text>
-              <text className="node-title" x="156" y="1296">Talks &amp; Presence</text>
-              <text className="node-sub" x="156" y="1316">conference talk · YouTube · LinkedIn</text>
-              <text className="node-sub" x="156" y="1333" fill="var(--text-dim)">▸ "Our adventure in building an IDP"</text>
-              <NodeStatus nodeId="speaking" nodeStatuses={nodeStatuses} cx={500} cy={1268} sx={486} sy={1272} loading="pending" ready="available" />
-            </NodeGrp>
-
-            <NodeGrp nodeId="codingame" ariaLabel="Codingame AI Bot — open details" {...nodeProps}>
-              <rect className="node-rect" x="560" y="1250" width="300" height="100" rx="5" ry="5" />
-              <text className="node-id" x="576" y="1272">job/codingame.2017</text>
-              <text className="node-title" x="576" y="1296">Codingame AI Bot</text>
-              <text className="node-sub" x="576" y="1316">Thailand category winner · 2017</text>
-              <text className="node-sub" x="576" y="1333" fill="var(--text-dim)">▸ Ruby · heuristic evaluation</text>
-              <NodeStatus nodeId="codingame" nodeStatuses={nodeStatuses} cx={840} cy={1268} sx={826} sy={1272} loading="loading" ready="won · 2017" />
+              <NodeStatus nodeId="pfa-app" nodeStatuses={nodeStatuses} cx={1280} cy={713} sx={1266} sy={717} loading="scheduled" ready="building" />
             </NodeGrp>
 
             <NodeGrp nodeId="community-out" ariaLabel="Community and mentoring — open details" {...nodeProps}>
-              <rect className="node-rect" x="900" y="1250" width="380" height="100" rx="5" ry="5" />
-              <text className="node-id" x="916" y="1272">service/community-out</text>
-              <text className="node-title" x="916" y="1296">Community &amp; Mentoring</text>
-              <text className="node-sub" x="916" y="1316">platform-eng lead · ai lead · mentor</text>
-              <text className="node-sub" x="916" y="1333" fill="var(--text-dim)">▸ engineer growth · knowledge transfer</text>
-              <NodeStatus nodeId="community-out" nodeStatuses={nodeStatuses} cx={1260} cy={1268} sx={1246} sy={1272} loading="spinning up" ready="running" />
+              <rect className="node-rect" x="800" y="935" width="460" height="100" rx="5" ry="5" />
+              <text className="node-id" x="816" y="957">service/community-out</text>
+              <text className="node-title" x="816" y="981">Community &amp; Mentoring</text>
+              <text className="node-sub" x="816" y="1001">platform-eng lead · ai lead · active mentor</text>
+              <text className="node-sub" x="816" y="1019" fill="var(--text-dim)">▸ engineer growth · knowledge transfer</text>
+              <NodeStatus nodeId="community-out" nodeStatuses={nodeStatuses} cx={1240} cy={953} sx={1226} sy={957} loading="spinning up" ready="running" />
             </NodeGrp>
+
+            <NodeGrp nodeId="speaking" ariaLabel="Talks and presence — open details" {...nodeProps}>
+              <rect className="node-rect" x="180" y="935" width="460" height="100" rx="5" ry="5" />
+              <text className="node-id" x="196" y="957">ingress/speaking</text>
+              <text className="node-title" x="196" y="981">Talks &amp; Presence</text>
+              <text className="node-sub" x="196" y="1001">conference talk · YouTube · LinkedIn</text>
+              <text className="node-sub" x="196" y="1019" fill="var(--text-dim)">▸ "Our adventure in building an IDP"</text>
+              <NodeStatus nodeId="speaking" nodeStatuses={nodeStatuses} cx={620} cy={953} sx={606} sy={957} loading="pending" ready="available" />
+            </NodeGrp>
+          </g>
+
+          {/* Layer 6 — external actors (positioned below the system) */}
+          <g className="layer-actors">
+            <g className={cl('external prov-fade', r('actor-clients') && 'in')} data-prov="actor-clients">
+              <rect className="actor-box" x="180" y="1310" width="200" height="70" rx="4" ry="4" />
+              <text className="actor-id" x="194" y="1333">{'{ external }'}</text>
+              <text className="actor-title" x="194" y="1355">Clients &amp; Employers</text>
+              <text className="actor-sub" x="194" y="1372">↳ hire / engage</text>
+            </g>
+            <g className={cl('external prov-fade', r('actor-community') && 'in')} data-prov="actor-community">
+              <rect className="actor-box" x="620" y="1310" width="200" height="70" rx="4" ry="4" />
+              <text className="actor-id" x="634" y="1333">{'{ external }'}</text>
+              <text className="actor-title" x="634" y="1355">Community</text>
+              <text className="actor-sub" x="634" y="1372">↳ platform · ai · talks</text>
+            </g>
+            <g className={cl('external prov-fade', r('actor-mentees') && 'in')} data-prov="actor-mentees">
+              <rect className="actor-box" x="1060" y="1310" width="200" height="70" rx="4" ry="4" />
+              <text className="actor-id" x="1074" y="1333">{'{ external }'}</text>
+              <text className="actor-title" x="1074" y="1355">Mentees</text>
+              <text className="actor-sub" x="1074" y="1372">↳ engineers, growing</text>
+            </g>
           </g>
 
           {/* Layer 7 — arrow labels */}
           <g className="layer-arrow-labels">
+            <ArrLabel id="clients-tech" activeArrow={activeArrow} x={28}   y={770}  text="hire / engage" anchor="start" />
+            <ArrLabel id="comm-tech"    activeArrow={activeArrow} x={1412} y={770}  text="audience" anchor="end" />
             <ArrLabel id="tech-plat"    activeArrow={activeArrow} x={460}  y={402} text="directs" />
             <ArrLabel id="tech-infra"   activeArrow={activeArrow} x={720}  y={402} text="owns" />
             <ArrLabel id="tech-ai"      activeArrow={activeArrow} x={980}  y={402} text="leads" />
             <ArrLabel id="plat-air"     activeArrow={activeArrow} x={300}  y={639} text="deployed to" />
             <ArrLabel id="infra-air"    activeArrow={activeArrow} x={510}  y={639} text="underlies" />
             <ArrLabel id="ai-dash"      activeArrow={activeArrow} x={980}  y={639} text="powers" />
-            <ArrLabel id="plat-pfa"     activeArrow={activeArrow} x={500}  y={710} text="supports" />
-            <ArrLabel id="infra-tel"    activeArrow={activeArrow} x={654}  y={670} text="built on" />
-            <ArrLabel id="plat-school"  activeArrow={activeArrow} x={566}  y={670} text="delivered" />
-            <ArrLabel id="ai-code"      activeArrow={activeArrow} x={1097}  y={643} text="algorithm" />
-            <ArrLabel id="ai-comm"      activeArrow={activeArrow} x={1115} y={900} text="drives" />
-            <ArrLabel id="plat-speak"   activeArrow={activeArrow} x={375}  y={878} text="informs" anchor="start" />
-            <ArrLabel id="speak-comm"   activeArrow={activeArrow} x={710}  y={1245} text="amplifies" />
+            <ArrLabel id="plat-pfa"     activeArrow={activeArrow} x={730}  y={631} text="supports" />
+            <ArrLabel id="ai-comm"      activeArrow={activeArrow} x={1140} y={665} text="drives" />
+            <ArrLabel id="comm-ment"    activeArrow={activeArrow} x={1175} y={1180} text="grows" anchor="start" />
+            <ArrLabel id="speak-comm"   activeArrow={activeArrow} x={560}  y={1200} text="broadcasts" />
           </g>
 
           {/* Layer 8 — footer */}
           <g>
-            <text className={cl('namespace-label prov-fade', r('footer-1') && 'in')} data-prov="footer-1" x="80" y="1405">
+            <text className={cl('namespace-label prov-fade', r('footer-1') && 'in')} data-prov="footer-1" x="80" y="1108">
               <tspan className="key">$</tspan> kubectl get all — last reconcile: <tspan fill="var(--text)">just now</tspan>
+            </text>
+            <text className={cl('namespace-label prov-fade', r('footer-2') && 'in')} data-prov="footer-2" x="80" y="1128" fontSize="11">
+              <tspan className="key">▸</tspan> <tspan fill="var(--text-muted)">hover any node to inspect — hover any line to see its role</tspan>
             </text>
           </g>
         </svg>

@@ -1,17 +1,15 @@
 import { useBootSequence } from '../../hooks/useBootSequence.js';
-import { useBootStatus } from '../../hooks/useBootStatus.js';
 
-function PsAuxRow({ pid, ns, name, time, finalStatus, finalLabel, nodeId, onPsRowClick }) {
-  const bootLabel = finalStatus === 'build' ? 'spawning' : 'starting';
-  const s = useBootStatus(finalStatus, finalLabel, bootLabel);
+function PsAuxRow({ pid, ns, name, time, nodeId, onPsRowClick, psRowStatuses }) {
+  const s = psRowStatuses?.[nodeId] ?? { status: 'boot', label: '…' };
   const clickable = !!(nodeId && onPsRowClick);
   return (
     <div
       className={`ps-row${clickable ? ' ps-row--link' : ''}`}
       role={clickable ? 'button' : undefined}
       tabIndex={clickable ? 0 : undefined}
-      onClick={clickable ? () => onPsRowClick(nodeId) : undefined}
-      onKeyDown={clickable ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onPsRowClick(nodeId); } } : undefined}
+      onClick={clickable ? (e) => onPsRowClick(nodeId, e.currentTarget) : undefined}
+      onKeyDown={clickable ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onPsRowClick(nodeId, e.currentTarget); } } : undefined}
       title={clickable ? `View ${ns}${name} in diagram` : undefined}
     >
       <div className="ps-pid">{pid}</div>
@@ -24,13 +22,13 @@ function PsAuxRow({ pid, ns, name, time, finalStatus, finalLabel, nodeId, onPsRo
   );
 }
 
-function PsAuxPanel({ onPsRowClick }) {
+function PsAuxPanel({ onPsRowClick, psRowStatuses }) {
   const rows = [
-    { pid: '2024', ns: 'tech-lead/', name: 'airline',             nodeId: 'airline',       time: '18mo', finalStatus: 'run',   finalLabel: 'running' },
-    { pid: '2023', ns: 'community/', name: 'platform-eng-lead',   nodeId: 'community-out', time: '3y',   finalStatus: 'run',   finalLabel: 'running' },
-    { pid: '2020', ns: 'community/', name: 'ai-lead',             nodeId: 'ai-tooling',    time: '6y',   finalStatus: 'run',   finalLabel: 'running' },
-    { pid: '2025', ns: 'side/',      name: 'ai-meeting-notes.app',nodeId: 'dashnote',      time: '1y',   finalStatus: 'build', finalLabel: 'building' },
-    { pid: '2025', ns: 'side/',      name: 'donation.app',        nodeId: 'donation-app',  time: '1y',   finalStatus: 'build', finalLabel: 'building' },
+    { pid: '2024', ns: 'tech-lead/', name: 'airline',             nodeId: 'airline',       time: '18mo', finalStatus: 'run'   },
+    { pid: '2023', ns: 'community/', name: 'platform-eng-lead',   nodeId: 'community-out', time: '3y',   finalStatus: 'run'   },
+    { pid: '2020', ns: 'community/', name: 'ai-lead',             nodeId: 'ai-tooling',    time: '6y',   finalStatus: 'run'   },
+    { pid: '2025', ns: 'side/',      name: 'ai-meeting-notes.app',nodeId: 'dashnote',      time: '1y',   finalStatus: 'build' },
+    { pid: '2025', ns: 'side/',      name: 'donation.app',        nodeId: 'donation-app',  time: '1y',   finalStatus: 'build' },
   ];
 
   return (
@@ -46,7 +44,7 @@ function PsAuxPanel({ onPsRowClick }) {
           <div className="ps-head">service</div>
           <div className="ps-head">started</div>
           <div className="ps-head">status</div>
-          {rows.map((r, i) => <PsAuxRow key={i} {...r} onPsRowClick={onPsRowClick} />)}
+          {rows.map((r, i) => <PsAuxRow key={i} {...r} onPsRowClick={onPsRowClick} psRowStatuses={psRowStatuses} />)}
         </div>
       </div>
     </div>
@@ -109,7 +107,7 @@ function HeroFoot() {
   );
 }
 
-export function HeroSection({ onPsRowClick }) {
+export function HeroSection({ onPsRowClick, psRowStatuses }) {
   const { heroWord, heroReady, bootReady } = useBootSequence();
 
   return (
@@ -143,7 +141,7 @@ export function HeroSection({ onPsRowClick }) {
           <span><span className="k">uptime:</span> <span className="v">12y · still running</span></span>        </div>
       </div>
       <div className="hero-middle">
-        <PsAuxPanel onPsRowClick={onPsRowClick} />
+        <PsAuxPanel onPsRowClick={onPsRowClick} psRowStatuses={psRowStatuses} />
         <LsIndexPanel />
       </div>
       <HeroFoot />

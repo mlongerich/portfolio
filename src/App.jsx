@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useHoverRefresh } from './hooks/useHoverRefresh.js';
 import { useNodeCard } from './hooks/useNodeCard.js';
+import { usePsRowStatuses } from './hooks/usePsRowStatuses.js';
 import { Header } from './components/Header/Header.jsx';
 import { HeroSection } from './components/Hero/HeroSection.jsx';
 import { DiagramSection } from './components/Diagram/DiagramSection.jsx';
@@ -15,23 +16,18 @@ export function App() {
   const openTalk = () => setTalkModalOpen(true);
   const closeTalk = () => setTalkModalOpen(false);
   const nodeCard = useNodeCard();
+  const psRowStatuses = usePsRowStatuses();
 
-  const handlePsRowClick = (nodeId) => {
-    const nodeEl = document.querySelector(`[data-node="${nodeId}"]`);
-    if (!nodeEl) return;
-    nodeEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    setTimeout(() => {
-      const el = document.querySelector(`[data-node="${nodeId}"]`);
-      if (el) nodeCard.handlers.pinCard(nodeId, el);
-    }, 650);
+  const handlePsRowClick = (nodeId, rowEl) => {
+    nodeCard.handlers.pinCard(nodeId, rowEl, 'psrow');
   };
 
   return (
     <>
       <Header />
       <main>
-        <HeroSection onPsRowClick={handlePsRowClick} />
-        <DiagramSection onTalkClick={openTalk} nodeCard={nodeCard} />
+        <HeroSection onPsRowClick={handlePsRowClick} psRowStatuses={psRowStatuses} />
+        <DiagramSection onTalkClick={openTalk} nodeCard={nodeCard} psRowStatuses={psRowStatuses} />
         <AboutSection />
         <ContactSection onTalkClick={openTalk} />
       </main>
