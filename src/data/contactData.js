@@ -30,7 +30,7 @@ export const CONTACTS = [
   },
   {
     label: 'resume / cv',
-    href: '/resume.pdf',
+    href: '/Michael-Longerich-Resume.pdf',
     value: 'download PDF →',
     download: true,
   },
